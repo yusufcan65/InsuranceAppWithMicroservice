@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+
+  postgres:
+    image: postgres:15
+    container_name: postgres-ms
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  auth-service:
+    build: ./authService/authService
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+
+  user-service:
+    build: ./userService/userService
+    container_name: user-service
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+
+volumes:
+  postgres_data:
