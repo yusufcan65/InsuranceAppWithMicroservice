@@ -1,5 +1,6 @@
 package insurance.userService.Controller;
 
+import insurance.userService.Dto.Customer.CustomerUserDto;
 import insurance.userService.Dto.UserAuthResponse;
 import insurance.userService.Dto.UserRequest;
 import insurance.userService.Dto.UserResponse;
@@ -48,5 +49,10 @@ public class UserController {
     public ResponseEntity<UserAuthResponse> getUserForAuth(@PathVariable String username){
         UserAuthResponse userAuthResponse = userService.getUserForAuth(username);
         return new ResponseEntity<>(userAuthResponse,HttpStatus.OK);
+    }
+    @GetMapping("/internal/{id}")
+    public ResponseEntity<CustomerUserDto> getCustomerUserById(@PathVariable UUID id){
+        CustomerUserDto customerUserDto = userService.getCustomerUserById(id);
+        return new ResponseEntity<>(customerUserDto,HttpStatus.OK);
     }
 }

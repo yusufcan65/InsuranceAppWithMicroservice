@@ -2,6 +2,7 @@ package insurance.userService.Service.Impl;
 
 import insurance.userService.Client.AuthClient;
 import insurance.userService.Dto.Auth.CreateAuthUserRequest;
+import insurance.userService.Dto.Customer.CustomerUserDto;
 import insurance.userService.Dto.UserAuthResponse;
 import insurance.userService.Dto.UserRequest;
 import insurance.userService.Dto.UserResponse;
@@ -50,6 +51,11 @@ public class UserServiceImpl implements UserService {
     public Users getUserById(UUID id) {
         Users user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("user not found"));
         return user;
+    }
+    @Override
+    public CustomerUserDto getCustomerUserById(UUID id){
+        Users user = getUserById(id);
+        return new CustomerUserDto(user.getId());
     }
 
     @Override

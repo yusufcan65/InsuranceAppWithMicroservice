@@ -5,9 +5,9 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-@FeignClient(name = "auth-service")
+@FeignClient(name = "authService")
 public interface AuthClient {
 
-    @PostMapping("/internal/create")
+    @PostMapping("/v1/auth/internal/create")
     void createAuthUser(@RequestBody CreateAuthUserRequest request);
 }
