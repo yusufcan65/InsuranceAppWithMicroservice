@@ -1,4 +1,4 @@
-package insurance.homeService.Dto;
+package insurance.healthService.Dto;
 
 import java.time.LocalDate;
 import java.util.UUID;

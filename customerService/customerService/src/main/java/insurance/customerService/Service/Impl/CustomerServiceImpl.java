@@ -75,7 +75,8 @@ public class CustomerServiceImpl implements CustomerService {
                 customerResponse.id(),
                 customerResponse.customerNumber(),
                 customerResponse.name(),
-                customerResponse.surname()
+                customerResponse.surname(),
+                customerResponse.birthDate()
         );
         return customerPolicyResponse;
     }
@@ -101,7 +102,8 @@ public class CustomerServiceImpl implements CustomerService {
                 customer.getPhoneNumber(),
                 customer.getCustomerNumber(),
                 customer.getIdNumber(),
-                customer.getEmail()
+                customer.getEmail(),
+                customer.getBirthDate()
 
         );
         return customerResponse;

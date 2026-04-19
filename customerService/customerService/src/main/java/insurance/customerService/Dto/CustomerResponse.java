@@ -1,5 +1,6 @@
 package insurance.customerService.Dto;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 public record CustomerResponse (
@@ -9,6 +10,7 @@ public record CustomerResponse (
         String phoneNumber,
         Integer customerNumber,
         String idNumber,
-        String email
+        String email,
+        LocalDate birthDate
 ){
 }
