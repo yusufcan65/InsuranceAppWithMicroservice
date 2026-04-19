@@ -4,6 +4,7 @@ import insurance.customerService.Client.UserClient;
 import insurance.customerService.Dto.CustomerRequest;
 import insurance.customerService.Dto.CustomerResponse;
 import insurance.customerService.Dto.UserDTO;
+import insurance.customerService.Dto.CustomerPolicyResponse;
 import insurance.customerService.Entity.Customer;
 import insurance.customerService.Repository.CustomerRepository;
 import insurance.customerService.Service.CustomerService;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -59,6 +61,23 @@ public class CustomerServiceImpl implements CustomerService {
     public List<CustomerResponse> getAllCustomer() {
         List<Customer> customers = customerRepository.findAll();
         return toResponseList(customers);
+    }
+
+    private CustomerResponse getById(UUID id){
+        Customer customer =  customerRepository.findById(id).orElseThrow(()-> new RuntimeException( "customer not found by Id "+ id));
+        return toResponse(customer);
+    }
+
+    @Override
+    public CustomerPolicyResponse getCustomerForPolicies(UUID id){
+        CustomerResponse customerResponse = getById(id);
+        CustomerPolicyResponse customerPolicyResponse = new CustomerPolicyResponse(
+                customerResponse.id(),
+                customerResponse.customerNumber(),
+                customerResponse.name(),
+                customerResponse.surname()
+        );
+        return customerPolicyResponse;
     }
 
     private Integer generateUniqueCustomerNumber() {

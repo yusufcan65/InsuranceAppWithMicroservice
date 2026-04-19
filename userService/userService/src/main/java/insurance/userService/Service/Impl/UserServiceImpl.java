@@ -4,6 +4,7 @@ import insurance.userService.Client.AuthClient;
 import insurance.userService.Dto.Auth.CreateAuthUserRequest;
 import insurance.userService.Dto.Customer.CustomerUserDto;
 import insurance.userService.Dto.UserAuthResponse;
+import insurance.userService.Dto.UserFeignResponse;
 import insurance.userService.Dto.UserRequest;
 import insurance.userService.Dto.UserResponse;
 import insurance.userService.Entity.Users;
@@ -78,6 +79,18 @@ public class UserServiceImpl implements UserService {
                 users.getId(),
                 users.getUsername(),
                 users.getStatus()
+        );
+    }
+
+    @Override
+    public UserFeignResponse userFeign(UUID id){
+        Users user = getUserById(id);
+
+        return new UserFeignResponse(
+                user.getId(),
+                user.getUsername(),
+                user.getUsername(),
+                user.getSurname()
         );
     }
 

@@ -2,6 +2,7 @@ package insurance.userService.Controller;
 
 import insurance.userService.Dto.Customer.CustomerUserDto;
 import insurance.userService.Dto.UserAuthResponse;
+import insurance.userService.Dto.UserFeignResponse;
 import insurance.userService.Dto.UserRequest;
 import insurance.userService.Dto.UserResponse;
 import insurance.userService.Entity.Users;
@@ -54,5 +55,11 @@ public class UserController {
     public ResponseEntity<CustomerUserDto> getCustomerUserById(@PathVariable UUID id){
         CustomerUserDto customerUserDto = userService.getCustomerUserById(id);
         return new ResponseEntity<>(customerUserDto,HttpStatus.OK);
+    }
+
+    @GetMapping("/internal/feign/{id}")
+    public ResponseEntity<UserFeignResponse> getUserForFeign(@PathVariable UUID id){
+        UserFeignResponse userFeignResponse = userService.userFeign(id);
+        return new ResponseEntity<>(userFeignResponse,HttpStatus.OK);
     }
 }

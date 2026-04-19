@@ -1,29 +1,22 @@
 server:
-  port: 8082
+  port: 8085
 
 spring:
   profiles:
     active: dev
-
   application:
-    name: userService
-
+    name: homeService
   datasource:
     url: ${DB_URL}
     username: ${DB_USER}
     password: ${DB_PASS}
-
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-
   sql:
     init:
       mode: always
-
-jwt:
-  secret: ${MY_SECRET_KEY}
 
 eureka:
   instance:

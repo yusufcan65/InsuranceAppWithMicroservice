@@ -2,6 +2,7 @@ package insurance.userService.Service;
 
 import insurance.userService.Dto.Customer.CustomerUserDto;
 import insurance.userService.Dto.UserAuthResponse;
+import insurance.userService.Dto.UserFeignResponse;
 import insurance.userService.Dto.UserRequest;
 import insurance.userService.Dto.UserResponse;
 import insurance.userService.Entity.Users;
@@ -17,5 +18,6 @@ public interface UserService {
     Users getUserByUsername(String username);
     UserAuthResponse getUserForAuth(String username);
     CustomerUserDto getCustomerUserById(UUID id);
+    UserFeignResponse userFeign(UUID id);
 
 }
