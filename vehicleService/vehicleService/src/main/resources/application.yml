@@ -1,0 +1,35 @@
+server:
+  port: 8088
+
+spring:
+  profiles:
+    active: dev
+  application:
+    name: vehicleService
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASS}
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  sql:
+    init:
+      mode: always
+
+eureka:
+  instance:
+    prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    enabled: false
+  servers:
+    - url: http://localhost:8083
+      description: API Gateway
