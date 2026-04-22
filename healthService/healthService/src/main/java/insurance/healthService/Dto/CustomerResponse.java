@@ -8,7 +8,10 @@ public record CustomerResponse(
         UUID id,
         String name,
         String surname,
+        String phoneNumber,
         Integer customerNumber,
+        String idNumber,
+        String email,
         LocalDate birthDate
 ) {
 }

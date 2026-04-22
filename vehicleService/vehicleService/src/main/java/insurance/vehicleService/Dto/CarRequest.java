@@ -1,10 +1,6 @@
 package insurance.vehicleService.Dto;
 
-import java.io.Serializable;
-import java.util.UUID;
-
-public record CarResponse(
-        UUID id,
+public record CarRequest(
         String brand,
         String model,
         Integer modelYear,
@@ -14,6 +10,4 @@ public record CarResponse(
         String fuelType,
         String transmission,
         String color
-
-) implements Serializable {
-}
+) {}

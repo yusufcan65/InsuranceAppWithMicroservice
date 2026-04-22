@@ -37,7 +37,7 @@ public class KaskoServiceImpl implements KaskoService {
     public KaskoPolicyDetailResponse createKaskoPolicyCreate(KaskoRequest kaskoRequest) {
 
         UserResponse userResponse = userClient.getUserForFeign(kaskoRequest.userId());
-        CustomerResponse customerResponse = customerClient.CustomerForFeign(kaskoRequest.customerId());
+        CustomerResponse customerResponse = customerClient.getCustomerForFeign(kaskoRequest.customerId());
         CarResponse carResponse = vehicleClient.getCarById(kaskoRequest.carId());
 
         Double prim = calculateInsuranceValue(carResponse.carValue());

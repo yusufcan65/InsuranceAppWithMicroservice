@@ -1,5 +1,6 @@
 package insurance.customerService.Dto;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.UUID;
 
@@ -12,5 +13,5 @@ public record CustomerResponse (
         String idNumber,
         String email,
         LocalDate birthDate
-){
+) implements Serializable {
 }

@@ -1,6 +1,5 @@
 package insurance.customerService.Service;
 
-import insurance.customerService.Dto.CustomerPolicyResponse;
 import insurance.customerService.Dto.CustomerRequest;
 import insurance.customerService.Dto.CustomerResponse;
 
@@ -11,6 +10,6 @@ public interface CustomerService {
 
     CustomerResponse createCustomer(CustomerRequest customerRequest);
     List<CustomerResponse> getAllCustomer();
-    CustomerPolicyResponse getCustomerForPolicies(UUID id);
+    CustomerResponse getCustomerForFeign(UUID id);
 
 }

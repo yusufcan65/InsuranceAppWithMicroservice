@@ -37,7 +37,7 @@ public class TrafficServiceImpl implements TrafficService {
     public TrafficPolicyDetailResponse createTrafficPolicyCreate(TrafficRequest trafficRequest) {
 
         UserResponse userResponse = userClient.getUserForFeign(trafficRequest.userId());
-        CustomerResponse customerResponse = customerClient.CustomerForFeign(trafficRequest.customerId());
+        CustomerResponse customerResponse = customerClient.getCustomerForFeign(trafficRequest.customerId());
         CarResponse carResponse = vehicleClient.getCarById(trafficRequest.carId());
 
         Double prim = calculateInsuranceValue(carResponse.carValue());

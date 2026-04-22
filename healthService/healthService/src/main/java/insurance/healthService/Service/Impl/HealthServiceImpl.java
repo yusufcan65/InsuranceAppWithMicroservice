@@ -34,7 +34,7 @@ public class HealthServiceImpl implements HealthService {
     public HealthPolicyResponse createHealthPolicy(HealthRequest request) {
 
         UserResponse userResponse = userClient.getUserForFeign(request.userId());
-        CustomerResponse customerResponse = customerClient.CustomerForFeign(request.customerId());
+        CustomerResponse customerResponse = customerClient.getCustomerForFeign(request.customerId());
 
         Double prim = calculateInsuranceValue(customerResponse.birthDate(), request.smokeStatus(),
                 request.sporStatus(), request.operationStatus(), request.chronicDiseaseStatus());

@@ -21,7 +21,8 @@ public class RouterValidator {
             "/v1/auth/v3/api-docs",
             "/v1/user/v3/api-docs",
             "/v1/customer/v3/api-docs",
-            "/webjars"
+            "/webjars",
+            "/actuator"
     );
 
     public Predicate<ServerHttpRequest> isSecured =

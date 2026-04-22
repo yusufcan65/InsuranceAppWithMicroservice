@@ -13,5 +13,5 @@ import java.util.UUID;
 public interface CustomerClient {
 
     @GetMapping("/v1/customer/internal/feign/{id}")
-    CustomerResponse CustomerForFeign(@PathVariable UUID id);
+    CustomerResponse getCustomerForFeign(@PathVariable UUID id);
 }

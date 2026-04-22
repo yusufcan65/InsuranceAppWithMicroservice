@@ -33,7 +33,7 @@ public class HomeServiceImpl implements HomeService {
     public DaskResponse createDaskPolicy(DaskRequest daskRequest) {
 
         UserResponse user = userClient.getUserForFeign(daskRequest.userId());
-        CustomerResponse customer = customerClient.CustomerForFeign(daskRequest.customerId());
+        CustomerResponse customer = customerClient.getCustomerForFeign(daskRequest.customerId());
 
         Double prim = calculateInsuranceValue(daskRequest.squareMeter(),daskRequest.floorNumber(),
                 daskRequest.numberBuildFloor(), daskRequest.damageState(), daskRequest.buildingAge());

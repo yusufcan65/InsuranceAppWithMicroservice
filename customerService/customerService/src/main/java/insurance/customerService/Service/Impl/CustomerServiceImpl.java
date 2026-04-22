@@ -4,10 +4,11 @@ import insurance.customerService.Client.UserClient;
 import insurance.customerService.Dto.CustomerRequest;
 import insurance.customerService.Dto.CustomerResponse;
 import insurance.customerService.Dto.UserDTO;
-import insurance.customerService.Dto.CustomerPolicyResponse;
 import insurance.customerService.Entity.Customer;
 import insurance.customerService.Repository.CustomerRepository;
 import insurance.customerService.Service.CustomerService;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,6 +27,7 @@ public class CustomerServiceImpl implements CustomerService {
         this.userClient = userClient;
     }
 
+    @CacheEvict(value = "customers", allEntries = true)
     @Override
     public CustomerResponse createCustomer(CustomerRequest customerRequest) {
 
@@ -52,35 +54,28 @@ public class CustomerServiceImpl implements CustomerService {
 
         Customer toSave = customerRepository.save(customer);
 
-
         return toResponse(toSave);
 
     }
 
+    @Cacheable(value = "customers", key = "'allCustomers'")
     @Override
     public List<CustomerResponse> getAllCustomer() {
         List<Customer> customers = customerRepository.findAll();
         return toResponseList(customers);
     }
 
-    private CustomerResponse getById(UUID id){
-        Customer customer =  customerRepository.findById(id).orElseThrow(()-> new RuntimeException( "customer not found by Id "+ id));
-        return toResponse(customer);
-    }
-
+    @Cacheable(value = "customers",key = "#id")
     @Override
-    public CustomerPolicyResponse getCustomerForPolicies(UUID id){
-        CustomerResponse customerResponse = getById(id);
-        CustomerPolicyResponse customerPolicyResponse = new CustomerPolicyResponse(
-                customerResponse.id(),
-                customerResponse.customerNumber(),
-                customerResponse.name(),
-                customerResponse.surname(),
-                customerResponse.birthDate()
-        );
-        return customerPolicyResponse;
+    public CustomerResponse getCustomerForFeign(UUID id){
+        Customer customer = getById(id);
+        return   toResponse(customer);
     }
 
+    private Customer getById(UUID id){
+        Customer customer =  customerRepository.findById(id).orElseThrow(()-> new RuntimeException( "customer not found by Id "+ id));
+        return customer;
+    }
     private Integer generateUniqueCustomerNumber() {
         Random random = new Random();
         int customerNumber;

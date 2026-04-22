@@ -1,15 +1,12 @@
 package insurance.customerService.Controller;
 
-import insurance.customerService.Dto.CustomerPolicyResponse;
 import insurance.customerService.Dto.CustomerRequest;
 import insurance.customerService.Dto.CustomerResponse;
 import insurance.customerService.Service.CustomerService;
-import jakarta.ws.rs.Path;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.lang.annotation.Retention;
 import java.util.List;
 import java.util.UUID;
 
@@ -37,8 +34,8 @@ public class CustomerController {
     }
 
     @GetMapping("/internal/feign/{id}")
-    public ResponseEntity<CustomerPolicyResponse> CustomerForFeign(@PathVariable UUID id){
-        CustomerPolicyResponse customerPolicyResponse = customerService.getCustomerForPolicies(id);
-        return new ResponseEntity<>(customerPolicyResponse, HttpStatus.OK);
+    public ResponseEntity<CustomerResponse> getCustomerForFeign(@PathVariable UUID id){
+        CustomerResponse customerResponse = customerService.getCustomerForFeign(id);
+        return new ResponseEntity<>(customerResponse, HttpStatus.OK);
     }
 }

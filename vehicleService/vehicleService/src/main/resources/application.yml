@@ -18,6 +18,18 @@ spring:
     init:
       mode: always
 
+
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  cache:
+    type: redis
+    redis:
+    time-to-live: 3600000  # 1 saat, milisaniye cinsinden
+
+
 eureka:
   instance:
     prefer-ip-address: true
@@ -33,3 +45,8 @@ springdoc:
   servers:
     - url: http://localhost:8083
       description: API Gateway
+
+logging:
+  level:
+    org.springframework.cache: TRACE
+    org.springframework.data.redis: DEBUG
