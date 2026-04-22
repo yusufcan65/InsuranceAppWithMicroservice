@@ -11,5 +11,8 @@ public interface PolicyService {
     PolicyResponse CreatePolicy(PolicyRequest request);
     List<PolicyResponse> getAll();
     PolicyResponse getPolicyById(UUID policyId);
+    PolicyResponse activePolicy(UUID policyId, UUID paymentId);
+
+
 
 }

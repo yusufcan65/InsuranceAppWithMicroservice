@@ -7,6 +7,7 @@ import insurance.policyService.Repository.PolicyRepository;
 import insurance.policyService.Service.PolicyService;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -55,6 +56,29 @@ public class PolicyServiceImpl implements PolicyService {
     public PolicyResponse getPolicyById(UUID policyId) {
         Policy policy = policyRepository.findById(policyId).orElseThrow(()-> new RuntimeException("policy not found by policyId" +policyId));
         return toResponse(policy);
+    }
+    private Policy getById(UUID id){
+        return policyRepository.findById(id).orElseThrow(()-> new RuntimeException("policy not found by id "+id));
+    }
+
+    @Override
+    public PolicyResponse activePolicy(UUID policyId, UUID paymentId) {
+
+        Policy policy = getById(policyId);
+        if(policy.getPaymentId() != null){
+            throw new RuntimeException("this policy value is pay please check policy paymant status and try again");
+        }
+        else {
+            policy.setStatus("P");
+            policy.setPaymentId(paymentId);
+            policy.setStartDate(LocalDate.now());
+            policy.setFinishDate(LocalDate.now().plusYears(1));
+            policy.setRemainderTime(0);
+
+            Policy toActive = policyRepository.save(policy);
+
+            return toResponse(toActive);
+        }
     }
 
     private Integer generateUniquePolicyNumber() {
