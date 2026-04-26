@@ -1,5 +1,6 @@
 package insurance.vehicleService.Entity;
 
+import insurance.insuranceCommon.BaseEntity;
 import jakarta.persistence.Entity;
 
 @Entity

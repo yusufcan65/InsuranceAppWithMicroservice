@@ -1,5 +1,6 @@
 package trafficService.trafficService.Entity;
 
+import insurance.insuranceCommon.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
@@ -7,7 +8,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "traffic-policied-cars-table")
-public class TrafficPolicyCars extends BaseEntity{
+public class TrafficPolicyCars extends BaseEntity {
 
     private UUID policyId;
     private UUID customerId;

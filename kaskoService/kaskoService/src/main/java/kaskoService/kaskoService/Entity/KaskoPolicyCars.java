@@ -1,5 +1,6 @@
 package kaskoService.kaskoService.Entity;
 
+import insurance.insuranceCommon.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 

@@ -1,8 +1,9 @@
 package insurance.userService.Entity;
 
 
-import jakarta.persistence.*;
-import java.util.UUID;
+import insurance.insuranceCommon.BaseEntity;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "users")

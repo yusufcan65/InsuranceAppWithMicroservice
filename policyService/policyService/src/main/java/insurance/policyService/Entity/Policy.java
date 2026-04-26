@@ -1,5 +1,6 @@
 package insurance.policyService.Entity;
 
+import insurance.insuranceCommon.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 
@@ -19,7 +20,6 @@ public class Policy extends BaseEntity {
     private LocalDate tanzimDate;
     private LocalDate startDate;
     private LocalDate finishDate;
-
 
     private UUID customerId;
 
