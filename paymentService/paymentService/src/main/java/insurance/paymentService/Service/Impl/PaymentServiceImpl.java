@@ -1,13 +1,13 @@
 package insurance.paymentService.Service.Impl;
 
-import insurance.paymentService.Client.PolicyClient;
-import insurance.paymentService.Dto.PaymentDetailResponse;
-import insurance.paymentService.Dto.PaymentRequest;
-import insurance.paymentService.Dto.PaymentResponse;
-import insurance.paymentService.Dto.PolicyResponse;
+import insurance.insuranceCommon.PaymentCompletedEvent;
+import insurance.paymentService.Dto.*;
 import insurance.paymentService.Entity.Payment;
+import insurance.paymentService.Entity.PolicyCache;
 import insurance.paymentService.Repository.PaymentRepository;
+import insurance.paymentService.Repository.PolicyCacheRepository;
 import insurance.paymentService.Service.PaymentService;
+import insurance.paymentService.Service.Producer.PaymentProducer;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,35 +16,53 @@ import java.time.LocalDate;
 public class PaymentServiceImpl implements PaymentService {
 
     private final PaymentRepository paymentRepository;
-    private final PolicyClient policyClient;
+    private final PaymentProducer paymentProducer;
+    private final PolicyCacheRepository policyCacheRepository;
 
-    public PaymentServiceImpl(PaymentRepository paymentRepository, PolicyClient policyClient) {
+
+
+    public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentProducer paymentProducer, PolicyCacheRepository policyCacheRepository) {
         this.paymentRepository = paymentRepository;
-        this.policyClient = policyClient;
+        this.paymentProducer = paymentProducer;
+        this.policyCacheRepository = policyCacheRepository;
     }
 
     @Override
     public PaymentDetailResponse doPayment(PaymentRequest request) {
 
-        PolicyResponse policyResponse = policyClient.getPolicyForFeign(request.policyId());
+        // kafka eklendi ve bu nedenle feign client yapısı devre dışı bırakıldı
+       /* RestResponse<PolicyResponse> restPolicyResponse = policyClient.getPolicyForPayment(request.policyId());
+        PolicyResponse policyResponse = restPolicyResponse.getData();*/
+
+        PolicyCache policyCache = policyCacheRepository.findById(request.policyId()).orElseThrow(()-> new RuntimeException("HATA: Poliçe bilgisi yerel veritabanında bulunamadı! (Henüz Kafka'dan gelmemiş olabilir)"));
 
         Payment payment = new Payment();
         payment.setPaymentDate(LocalDate.now());
-        payment.setAmount(policyResponse.prim());
+        payment.setAmount(policyCache.getPrim());
         payment.setCvv(request.cvv());
         payment.setCardNumber(request.cardNumber());
         payment.setExpiryDate(request.expiryDate());
         payment.setCardOwner(request.cardOwner());
-        payment.setPolicyId(policyResponse.id());
-        payment.setPolicyNumber(policyResponse.policyNumber());
+        payment.setPolicyId(policyCache.getId());
+        payment.setPolicyNumber(policyCache.getPolicyNumber());
 
         Payment toSave = paymentRepository.save(payment);
 
-        PolicyResponse updatePolicy = policyClient.activePolicy(policyResponse.id(), toSave.getId());
+        paymentProducer.sendPaymentCompleted(
+                new PaymentCompletedEvent(
+                        toSave.getPolicyId(),
+                        toSave.getId(),
+                        toSave.getAmount(),
+                        toSave.getPolicyNumber()
+                )
+        );
+
+        // kafka eklendi ve bu şekilde feign client devre dışı bırakıldı
+      //  PolicyResponse updatePolicy = policyClient.activePolicy(policyResponse.id(), toSave.getId());
 
         PaymentResponse paymentResponse = toResponse(payment);
 
-        PaymentDetailResponse paymentDetailResponse = new PaymentDetailResponse(paymentResponse,updatePolicy);
+        PaymentDetailResponse paymentDetailResponse = new PaymentDetailResponse(paymentResponse,null);
 
         return paymentDetailResponse;
     }

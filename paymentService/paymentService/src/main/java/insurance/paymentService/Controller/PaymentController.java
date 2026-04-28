@@ -1,5 +1,6 @@
 package insurance.paymentService.Controller;
 
+import insurance.insuranceCommon.RestResponse;
 import insurance.paymentService.Dto.PaymentDetailResponse;
 import insurance.paymentService.Dto.PaymentRequest;
 import insurance.paymentService.Service.PaymentService;
@@ -22,8 +23,8 @@ public class PaymentController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<PaymentDetailResponse> doPayment(@RequestBody PaymentRequest paymentRequest){
+    public ResponseEntity<RestResponse<PaymentDetailResponse>> doPayment(@RequestBody PaymentRequest paymentRequest){
         PaymentDetailResponse paymentDetailResponse = paymentService.doPayment(paymentRequest);
-        return new ResponseEntity<>(paymentDetailResponse, HttpStatus.OK);
+        return new ResponseEntity<>(RestResponse.of(paymentDetailResponse), HttpStatus.OK);
     }
 }

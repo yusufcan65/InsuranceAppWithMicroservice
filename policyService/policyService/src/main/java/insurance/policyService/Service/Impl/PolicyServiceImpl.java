@@ -1,10 +1,16 @@
 package insurance.policyService.Service.Impl;
 
+import insurance.insuranceCommon.PolicyCreatedEvent;
 import insurance.policyService.Dto.PolicyRequest;
 import insurance.policyService.Dto.PolicyResponse;
+import insurance.policyService.Dto.UpdatePolicyRequest;
 import insurance.policyService.Entity.Policy;
+import insurance.policyService.Exception.PolicyAlreadyPaidException;
+import insurance.policyService.Exception.PolicyNotFoundException;
 import insurance.policyService.Repository.PolicyRepository;
 import insurance.policyService.Service.PolicyService;
+import insurance.policyService.Service.Producer.PolicyProducer;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -18,11 +24,15 @@ public class PolicyServiceImpl implements PolicyService {
 
     private final PolicyRepository policyRepository;
 
-    public PolicyServiceImpl(PolicyRepository policyRepository) {
+    private final PolicyProducer policyProducer;
+
+    public PolicyServiceImpl(PolicyRepository policyRepository, PolicyProducer policyProducer) {
         this.policyRepository = policyRepository;
+        this.policyProducer = policyProducer;
     }
 
     @Override
+    @Transactional
     public PolicyResponse CreatePolicy(PolicyRequest request) {
         Policy policy = new Policy();
 
@@ -38,12 +48,40 @@ public class PolicyServiceImpl implements PolicyService {
         policy.setCustomerId(request.customerId());
         policy.setUserId(request.userId());
 
-
-
-
         Policy toSave = policyRepository.save(policy);
 
+        policyProducer.sendPolicyCreated(new PolicyCreatedEvent(
+                toSave.getId(),
+                toSave.getPrim(),
+                toSave.getPolicyNumber()
+        ));
+
+
         return toResponse(toSave);
+    }
+    @Override
+    public PolicyResponse updatePolicy(UpdatePolicyRequest updateRequest){
+
+        Policy policy = getById(updateRequest.policyId());
+        policy.setPrim(updateRequest.prim());
+
+        Policy toUpdate = policyRepository.save(policy);
+
+        policyProducer.sendPolicyUpdated(new PolicyCreatedEvent(
+                toUpdate.getId(),
+                toUpdate.getPrim(),
+                toUpdate.getPolicyNumber()
+        ));
+        return toResponse(toUpdate);
+
+    }
+    @Override
+    public PolicyResponse deletePolicy(UUID policyId) {
+        Policy policy = getById(policyId);
+        policyRepository.deleteById(policy.getId());
+        policyProducer.sendPolicyDeleted(policy.getId());
+
+        return toResponse(policy);
     }
 
     @Override
@@ -54,19 +92,28 @@ public class PolicyServiceImpl implements PolicyService {
 
     @Override
     public PolicyResponse getPolicyById(UUID policyId) {
-        Policy policy = policyRepository.findById(policyId).orElseThrow(()-> new RuntimeException("policy not found by policyId" +policyId));
+        Policy policy = policyRepository.findById(policyId).orElseThrow(()-> new PolicyNotFoundException("policy not found by policyId" +policyId));
         return toResponse(policy);
     }
+    @Override
+    public PolicyResponse getPolicyForPayment(UUID policyId){
+        PolicyResponse policy = getPolicyById(policyId);
+
+        if( "P".equals(policy.status()) || policy.paymentId() != null){
+            throw new PolicyAlreadyPaidException("this policy value is pay please check policy payment status and try again");
+        }
+        return policy;
+    }
     private Policy getById(UUID id){
-        return policyRepository.findById(id).orElseThrow(()-> new RuntimeException("policy not found by id "+id));
+        return policyRepository.findById(id).orElseThrow(()-> new PolicyNotFoundException("policy not found by id "+id));
     }
 
     @Override
     public PolicyResponse activePolicy(UUID policyId, UUID paymentId) {
 
         Policy policy = getById(policyId);
-        if(policy.getPaymentId() != null){
-            throw new RuntimeException("this policy value is pay please check policy paymant status and try again");
+        if( "P".equals(policy.getStatus()) || policy.getPaymentId() != null){
+            throw new PolicyAlreadyPaidException("this policy value is pay please check policy paymant status and try again");
         }
         else {
             policy.setStatus("P");
