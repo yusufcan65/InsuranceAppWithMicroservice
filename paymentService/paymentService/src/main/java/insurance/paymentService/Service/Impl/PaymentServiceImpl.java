@@ -4,6 +4,7 @@ import insurance.insuranceCommon.PaymentCompletedEvent;
 import insurance.paymentService.Dto.*;
 import insurance.paymentService.Entity.Payment;
 import insurance.paymentService.Entity.PolicyCache;
+import insurance.paymentService.Exception.ResourceNotFoundException;
 import insurance.paymentService.Repository.PaymentRepository;
 import insurance.paymentService.Repository.PolicyCacheRepository;
 import insurance.paymentService.Service.PaymentService;
@@ -19,8 +20,6 @@ public class PaymentServiceImpl implements PaymentService {
     private final PaymentProducer paymentProducer;
     private final PolicyCacheRepository policyCacheRepository;
 
-
-
     public PaymentServiceImpl(PaymentRepository paymentRepository, PaymentProducer paymentProducer, PolicyCacheRepository policyCacheRepository) {
         this.paymentRepository = paymentRepository;
         this.paymentProducer = paymentProducer;
@@ -34,7 +33,8 @@ public class PaymentServiceImpl implements PaymentService {
        /* RestResponse<PolicyResponse> restPolicyResponse = policyClient.getPolicyForPayment(request.policyId());
         PolicyResponse policyResponse = restPolicyResponse.getData();*/
 
-        PolicyCache policyCache = policyCacheRepository.findById(request.policyId()).orElseThrow(()-> new RuntimeException("HATA: Poliçe bilgisi yerel veritabanında bulunamadı! (Henüz Kafka'dan gelmemiş olabilir)"));
+        PolicyCache policyCache = policyCacheRepository.findById(request.policyId())
+                .orElseThrow(()-> new ResourceNotFoundException("HATA: Poliçe bilgisi yerel veritabanında bulunamadı! (Henüz Kafka'dan gelmemiş olabilir)"));
 
         Payment payment = new Payment();
         payment.setPaymentDate(LocalDate.now());

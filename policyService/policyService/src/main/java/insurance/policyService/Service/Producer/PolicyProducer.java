@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 import java.util.UUID;
 
 @Component
-
 public class PolicyProducer {
     private final KafkaTemplate<String, Object> kafkaTemplate;
     Logger log = LoggerFactory.getLogger(PolicyProducer.class);

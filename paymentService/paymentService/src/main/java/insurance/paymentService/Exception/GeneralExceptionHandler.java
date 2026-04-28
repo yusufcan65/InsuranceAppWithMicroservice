@@ -14,4 +14,9 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<RestResponse<String>> policyAlreadyPaidException(PolicyAlreadyPaidException exception) {
         return new ResponseEntity<>(RestResponse.error(exception.getMessage()), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<RestResponse<String>> resourceNotFoundException(ResourceNotFoundException exception){
+        return new ResponseEntity<>(RestResponse.error(exception.getMessage()), HttpStatus.NOT_FOUND);
+    }
 }

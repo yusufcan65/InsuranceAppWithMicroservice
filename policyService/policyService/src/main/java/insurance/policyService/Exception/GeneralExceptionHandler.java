@@ -18,4 +18,9 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<RestResponse<String>>  policyAlreadyPaidException(PolicyAlreadyPaidException exception){
         return new ResponseEntity<>(RestResponse.error(exception.getMessage()), HttpStatus.CONFLICT);
     }
+
+    @ExceptionHandler(PolicyAlreadyActiveException.class)
+    public ResponseEntity<RestResponse<String>> policyAlreadyActiveException(PolicyAlreadyActiveException exception){
+        return new ResponseEntity<>(RestResponse.error(exception.getMessage()),HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 }

@@ -5,6 +5,7 @@ import insurance.policyService.Dto.PolicyRequest;
 import insurance.policyService.Dto.PolicyResponse;
 import insurance.policyService.Dto.UpdatePolicyRequest;
 import insurance.policyService.Entity.Policy;
+import insurance.policyService.Exception.PolicyAlreadyActiveException;
 import insurance.policyService.Exception.PolicyAlreadyPaidException;
 import insurance.policyService.Exception.PolicyNotFoundException;
 import insurance.policyService.Repository.PolicyRepository;
@@ -60,11 +61,16 @@ public class PolicyServiceImpl implements PolicyService {
         return toResponse(toSave);
     }
     @Override
+    @Transactional
     public PolicyResponse updatePolicy(UpdatePolicyRequest updateRequest){
 
         Policy policy = getById(updateRequest.policyId());
-        policy.setPrim(updateRequest.prim());
 
+        if("P".equals(policy.getStatus())){
+            throw new PolicyAlreadyActiveException("You can't update an active policy");
+        }
+
+        policy.setPrim(updateRequest.prim());
         Policy toUpdate = policyRepository.save(policy);
 
         policyProducer.sendPolicyUpdated(new PolicyCreatedEvent(
@@ -76,8 +82,13 @@ public class PolicyServiceImpl implements PolicyService {
 
     }
     @Override
+    @Transactional
     public PolicyResponse deletePolicy(UUID policyId) {
         Policy policy = getById(policyId);
+
+        if( "P".equals(policy.getStatus())){
+            throw new PolicyAlreadyActiveException("You can't delete an active policy");
+        }
         policyRepository.deleteById(policy.getId());
         policyProducer.sendPolicyDeleted(policy.getId());
 
@@ -105,7 +116,8 @@ public class PolicyServiceImpl implements PolicyService {
         return policy;
     }
     private Policy getById(UUID id){
-        return policyRepository.findById(id).orElseThrow(()-> new PolicyNotFoundException("policy not found by id "+id));
+        return policyRepository.findById(id)
+                .orElseThrow(()-> new PolicyNotFoundException("policy not found by id "+id));
     }
 
     @Override
