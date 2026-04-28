@@ -2,6 +2,7 @@ package insurance.homeService.Client;
 
 import insurance.homeService.Dto.CreateDaskPolicyRequest;
 import insurance.homeService.Dto.PolicyResponse;
+import insurance.insuranceCommon.RestResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -10,5 +11,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface PolicyClient {
 
     @PostMapping("/v1/policy/internal/feign/create")
-    PolicyResponse createPolicy(@RequestBody CreateDaskPolicyRequest request);
+    RestResponse<PolicyResponse> createPolicy(@RequestBody CreateDaskPolicyRequest request);
 }

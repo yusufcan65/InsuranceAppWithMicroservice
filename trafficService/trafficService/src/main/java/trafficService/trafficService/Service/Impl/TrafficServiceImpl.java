@@ -1,5 +1,6 @@
 package trafficService.trafficService.Service.Impl;
 
+import insurance.insuranceCommon.RestResponse;
 import org.springframework.stereotype.Service;
 import trafficService.trafficService.Client.CustomerClient;
 import trafficService.trafficService.Client.PolicyClient;
@@ -54,18 +55,19 @@ public class TrafficServiceImpl implements TrafficService {
 
                 );
 
-        PolicyResponse policyResponse = policyClient.createPolicy(request);
+        RestResponse<PolicyResponse> policyResponse = policyClient.createPolicy(request);
+        PolicyResponse policyResponse1 = policyResponse.getData();
 
         TrafficPolicyCars trafficPolicyCars = new TrafficPolicyCars();
         trafficPolicyCars.setCarId(carResponse.id());
-        trafficPolicyCars.setPolicyId(policyResponse.id());
+        trafficPolicyCars.setPolicyId(policyResponse1.id());
         trafficPolicyCars.setCustomerId(customerResponse.id());
 
         TrafficPolicyCars toSave = trafficRepository.save(trafficPolicyCars);
 
         TrafficResponse trafficResponse = toResponse(toSave);
 
-        TrafficPolicyDetailResponse trafficPolicyDetailResponse = new TrafficPolicyDetailResponse(policyResponse,customerResponse,userResponse,trafficResponse);
+        TrafficPolicyDetailResponse trafficPolicyDetailResponse = new TrafficPolicyDetailResponse(policyResponse1,customerResponse,userResponse,trafficResponse);
 
 
         return trafficPolicyDetailResponse;
@@ -79,7 +81,6 @@ public class TrafficServiceImpl implements TrafficService {
         value = value*0.021;
         return value;
     }
-
 
     private LocalDate calculateFinishDate(LocalDate startDate) {
         return startDate.plusDays(15);

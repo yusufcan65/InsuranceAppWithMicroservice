@@ -7,6 +7,7 @@ import insurance.homeService.Dto.*;
 import insurance.homeService.Entity.Home;
 import insurance.homeService.Repository.HomeRepository;
 import insurance.homeService.Service.HomeService;
+import insurance.insuranceCommon.RestResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -50,11 +51,12 @@ public class HomeServiceImpl implements HomeService {
                 customer.id(),
                 user.id()
         );
-        PolicyResponse policyResponse = policyClient.createPolicy(policyRequest);
+        RestResponse<PolicyResponse> policyResponse = policyClient.createPolicy(policyRequest);
+        PolicyResponse policyResponse1 = policyResponse.getData();
 
         Home home = new Home();
         home.setAddressCode(daskRequest.addressCode());
-        home.setPolicyId(policyResponse.id());
+        home.setPolicyId(policyResponse1.id());
         home.setBuildingAge(daskRequest.buildingAge());
         home.setBuildStyle(daskRequest.BuildStyle());
         home.setDamageState(daskRequest.damageState());
@@ -67,7 +69,7 @@ public class HomeServiceImpl implements HomeService {
 
         HomeResponse  homeResponse = toResponse(toSave);
 
-        DaskResponse daskResponse = new DaskResponse(homeResponse,policyResponse,customer,user);
+        DaskResponse daskResponse = new DaskResponse(homeResponse,policyResponse1,customer,user);
 
         return daskResponse;
     }

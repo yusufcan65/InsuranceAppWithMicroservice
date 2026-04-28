@@ -1,6 +1,7 @@
 package trafficService.trafficService.Client;
 
 
+import insurance.insuranceCommon.RestResponse;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
@@ -21,12 +22,10 @@ public interface PolicyClient {
     @PostMapping("/v1/policy/internal/feign/create")
     @Retry(name = "policyRetry")
     @CircuitBreaker(name = "policyServiceCB", fallbackMethod = "policyFallBack")
-    PolicyResponse createPolicy(@RequestBody CreateTrafficPolicyRequest request);
+    RestResponse<PolicyResponse> createPolicy(@RequestBody CreateTrafficPolicyRequest request);
 
     default PolicyResponse policyFallBack(CreateTrafficPolicyRequest request, Throwable e){
-
         logger.error("policy service hata verdi ve poliçe kaydı gerçekleşmedi :",e.getMessage());
-
         throw new ServiceUnavailableException("Policy service meşgul daha sonra tekrar deneyiniz.");
     }
 }

@@ -7,6 +7,7 @@ import insurance.healthService.Dto.*;
 import insurance.healthService.Entity.Health;
 import insurance.healthService.Repository.HealthRepository;
 import insurance.healthService.Service.HealthService;
+import insurance.insuranceCommon.RestResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -51,12 +52,13 @@ public class HealthServiceImpl implements HealthService {
                 userResponse.id()
         );
 
-        PolicyResponse policyResponse = policyClient.createPolicy(policyRequest);
+        RestResponse<PolicyResponse> policyResponse = policyClient.createPolicy(policyRequest);
+        PolicyResponse policyResponse1 = policyResponse.getData();
 
         int age = calculateAgeCustomer(customerResponse.birthDate());
         Health health = new Health();
         health.setAge(age);
-        health.setPolicyId(policyResponse.id());
+        health.setPolicyId(policyResponse1.id());
         health.setCustomerId(customerResponse.id());
         health.setSmokeStatus(request.smokeStatus());
         health.setOperationStatus(request.operationStatus());
@@ -67,7 +69,7 @@ public class HealthServiceImpl implements HealthService {
 
         HealthResponse healthResponse = toResponse(toSave);
 
-        HealthPolicyResponse healthPolicyResponse = new HealthPolicyResponse(healthResponse,customerResponse,userResponse,policyResponse);
+        HealthPolicyResponse healthPolicyResponse = new HealthPolicyResponse(healthResponse,customerResponse,userResponse,policyResponse1);
 
         return healthPolicyResponse;
     }

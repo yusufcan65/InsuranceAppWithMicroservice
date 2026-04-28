@@ -1,5 +1,6 @@
 package kaskoService.kaskoService.Service.Impl;
 
+import insurance.insuranceCommon.RestResponse;
 import kaskoService.kaskoService.Client.CustomerClient;
 import kaskoService.kaskoService.Client.PolicyClient;
 import kaskoService.kaskoService.Client.UserClient;
@@ -55,18 +56,19 @@ public class KaskoServiceImpl implements KaskoService {
 
                 );
 
-        PolicyResponse policyResponse = policyClient.createPolicy(request);
+        RestResponse<PolicyResponse> policyResponse = policyClient.createPolicy(request);
+        PolicyResponse policyResponse1 = policyResponse.getData();
 
         KaskoPolicyCars kaskoPolicyCars = new KaskoPolicyCars();
         kaskoPolicyCars.setCarId(carResponse.id());
-        kaskoPolicyCars.setPolicyId(policyResponse.id());
+        kaskoPolicyCars.setPolicyId(policyResponse1.id());
         kaskoPolicyCars.setCustomerId(customerResponse.id());
 
         KaskoPolicyCars toSave = kaskoRepository.save(kaskoPolicyCars);
 
         KaskoResponse kaskoResponse = toResponse(toSave);
 
-        KaskoPolicyDetailResponse kaskoPolicyDetailResponse = new KaskoPolicyDetailResponse(policyResponse,customerResponse,userResponse,kaskoResponse);
+        KaskoPolicyDetailResponse kaskoPolicyDetailResponse = new KaskoPolicyDetailResponse(policyResponse1,customerResponse,userResponse,kaskoResponse);
 
 
         return kaskoPolicyDetailResponse;

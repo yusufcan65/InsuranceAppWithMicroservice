@@ -1,6 +1,7 @@
 package kaskoService.kaskoService.Client;
 
 
+import insurance.insuranceCommon.RestResponse;
 import kaskoService.kaskoService.Dto.CreateKaskoPolicyRequest;
 import kaskoService.kaskoService.Dto.PolicyResponse;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -12,5 +13,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface PolicyClient {
 
     @PostMapping("/v1/policy/internal/feign/create")
-    PolicyResponse createPolicy(@RequestBody CreateKaskoPolicyRequest request);
+    RestResponse<PolicyResponse> createPolicy(@RequestBody CreateKaskoPolicyRequest request);
 }
