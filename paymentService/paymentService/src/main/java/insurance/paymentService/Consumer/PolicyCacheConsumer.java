@@ -1,7 +1,8 @@
 package insurance.paymentService.Consumer;
 
 
-import insurance.insuranceCommon.PolicyCreatedEvent;
+import insurance.insuranceCommon.Event.PolicyEvents.PolicyCreatedEvent;
+import insurance.insuranceCommon.Event.PolicyEvents.PolicyDeleteEvent;
 import insurance.paymentService.Entity.PolicyCache;
 import insurance.paymentService.Repository.PolicyCacheRepository;
 import org.slf4j.Logger;
@@ -65,14 +66,17 @@ public class PolicyCacheConsumer {
             groupId = "payment-cache-group-v99",
             properties = {"spring.json.value.default.type=java.lang.String"}
     )
-    public void consumePolicyDeleted(String message) {
-        log.info("Poliçe SİLME mesajı alındı: {}", message);
+    public void consumePolicyDeleted(PolicyDeleteEvent event) { // String yerine Event nesnesi
+        log.info("Poliçe SİLME mesajı alındı. Event ID: {}, Poliçe ID: {}",
+                event.getEventId(), event.getPolicyId());
 
-        UUID policyId = UUID.fromString(message.replace("\"", ""));
+        UUID policyId = event.getPolicyId(); // Artık manuel dönüştürmeye gerek yok!
 
         if (policyCacheRepository.existsById(policyId)) {
             policyCacheRepository.deleteById(policyId);
-            log.info("Poliçe cache'den temizlendi.");
+            log.info("Poliçe ID: {} başarıyla cache'den temizlendi.", policyId);
+        } else {
+            log.warn("Silinmek istenen poliçe cache'de bulunamadı: {}", policyId);
         }
     }
 }

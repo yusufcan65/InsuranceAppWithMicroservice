@@ -1,7 +1,9 @@
 package insurance.policyService.Service.Producer;
 
+import insurance.insuranceCommon.Event.BaseEvent;
+import insurance.insuranceCommon.Event.PolicyEvents.PolicyDeleteEvent;
 import insurance.insuranceCommon.KafkaTopics;
-import insurance.insuranceCommon.PolicyCreatedEvent;
+import insurance.insuranceCommon.Event.PolicyEvents.PolicyCreatedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -11,10 +13,10 @@ import java.util.UUID;
 
 @Component
 public class PolicyProducer {
-    private final KafkaTemplate<String, Object> kafkaTemplate;
+    private final KafkaTemplate<String, BaseEvent> kafkaTemplate;
     Logger log = LoggerFactory.getLogger(PolicyProducer.class);
 
-    public PolicyProducer(KafkaTemplate<String, Object> kafkaTemplate) {
+    public PolicyProducer(KafkaTemplate<String, BaseEvent> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 
@@ -23,8 +25,8 @@ public class PolicyProducer {
         kafkaTemplate.send(KafkaTopics.POLICY_CREATED, event);
     }
 
-    public void sendPolicyDeleted(UUID policyId) {
-        kafkaTemplate.send(KafkaTopics.POLICY_DELETED, policyId);
+    public void sendPolicyDeleted(PolicyDeleteEvent event) {
+        kafkaTemplate.send(KafkaTopics.POLICY_DELETED, event);
     }
     public void sendPolicyUpdated(PolicyCreatedEvent event) {
         kafkaTemplate.send(KafkaTopics.POLICY_UPDATED, event);

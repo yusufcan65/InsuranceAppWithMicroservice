@@ -1,16 +1,17 @@
 package insurance.paymentService.Service.Producer;
 
+import insurance.insuranceCommon.Event.BaseEvent;
 import insurance.insuranceCommon.KafkaTopics;
-import insurance.insuranceCommon.PaymentCompletedEvent;
+import insurance.insuranceCommon.Event.PaymentEvents.PaymentCompletedEvent;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PaymentProducer {
 
-    private final KafkaTemplate<String, PaymentCompletedEvent> kafkaTemplate;
+    private final KafkaTemplate<String, BaseEvent> kafkaTemplate;
 
-    public PaymentProducer(KafkaTemplate<String, PaymentCompletedEvent> kafkaTemplate) {
+    public PaymentProducer(KafkaTemplate<String, BaseEvent> kafkaTemplate) {
         this.kafkaTemplate = kafkaTemplate;
     }
 

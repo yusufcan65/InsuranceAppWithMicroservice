@@ -1,7 +1,7 @@
 package insurance.policyService.Consumer;
 
 import insurance.insuranceCommon.KafkaTopics;
-import insurance.insuranceCommon.PaymentCompletedEvent;
+import insurance.insuranceCommon.Event.PaymentEvents.PaymentCompletedEvent;
 import insurance.policyService.Service.PolicyService;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Service;

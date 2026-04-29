@@ -1,9 +1,11 @@
-package insurance.insuranceCommon;
+package insurance.insuranceCommon.Event.PolicyEvents;
+
+import insurance.insuranceCommon.Event.AbstractBaseEvent;
 
 import java.io.Serializable;
 import java.util.UUID;
 
-public class PolicyCreatedEvent implements Serializable {
+public class PolicyCreatedEvent  extends AbstractBaseEvent {
     private UUID id;
     private Double prim;
     private Integer policyNumber;

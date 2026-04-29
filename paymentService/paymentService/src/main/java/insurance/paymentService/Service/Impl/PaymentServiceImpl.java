@@ -1,6 +1,6 @@
 package insurance.paymentService.Service.Impl;
 
-import insurance.insuranceCommon.PaymentCompletedEvent;
+import insurance.insuranceCommon.Event.PaymentEvents.PaymentCompletedEvent;
 import insurance.paymentService.Dto.*;
 import insurance.paymentService.Entity.Payment;
 import insurance.paymentService.Entity.PolicyCache;

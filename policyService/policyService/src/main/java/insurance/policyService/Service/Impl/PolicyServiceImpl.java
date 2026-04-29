@@ -1,6 +1,7 @@
 package insurance.policyService.Service.Impl;
 
-import insurance.insuranceCommon.PolicyCreatedEvent;
+import insurance.insuranceCommon.Event.PolicyEvents.PolicyCreatedEvent;
+import insurance.insuranceCommon.Event.PolicyEvents.PolicyDeleteEvent;
 import insurance.policyService.Dto.PolicyRequest;
 import insurance.policyService.Dto.PolicyResponse;
 import insurance.policyService.Dto.UpdatePolicyRequest;
@@ -90,7 +91,9 @@ public class PolicyServiceImpl implements PolicyService {
             throw new PolicyAlreadyActiveException("You can't delete an active policy");
         }
         policyRepository.deleteById(policy.getId());
-        policyProducer.sendPolicyDeleted(policy.getId());
+        policyProducer.sendPolicyDeleted(new PolicyDeleteEvent(
+                policy.getId()
+        ));
 
         return toResponse(policy);
     }
