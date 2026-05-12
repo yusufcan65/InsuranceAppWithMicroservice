@@ -1,12 +1,98 @@
 version: '3.8'
 
 services:
+  # --- VERİTABANI ---
+  insurance-postgres:
+    image: postgres:15
+    container_name: insurance-postgres
+    command: ["postgres", "-c", "max_connections=200"]
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5434:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - insurance-net
+
+  # --- ÖNBELLEK ---
+  redis-ms:
+    image: redis:latest
+    container_name: redis-ms
+    ports:
+      - "6379:6379"
+    networks:
+      - insurance-net
+
+  # --- MONITORING (ZIPKIN) ---
+  zipkin:
+    image: openzipkin/zipkin
+    container_name: zipkin
+    ports:
+      - "9411:9411"
+    networks:
+      - insurance-net
+
+  # --- CONFIG SERVER ---
+  config-server:
+    build: ./config-server/config-server
+    container_name: config-server
+    ports:
+      - "8888:8888"
+    environment:
+      - SPRING_CLOUD_CONFIG_SERVER_GIT_URI=${GITHUB_REPO_URI}
+      - SPRING_CLOUD_CONFIG_SERVER_GIT_USERNAME=${GITHUB_USERNAME}
+      - SPRING_CLOUD_CONFIG_SERVER_GIT_PASSWORD=${GITHUB_TOKEN}
+      - SPRING_CLOUD_CONFIG_SERVER_GIT_DEFAULT_LABEL=main
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8888/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+    networks:
+      - insurance-net
+
+  # --- EUREKA ---
+  eureka-server:
+    build: ./eureka-server/eureka-server
+    container_name: eureka-server
+    ports:
+      - "8761:8761"
+    environment:
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+    depends_on:
+      config-server:
+        condition: service_healthy
+    networks:
+      - insurance-net
+
+  # --- API GATEWAY ---
+  api-gateway:
+    build: ./api-gateway/api-gateway
+    container_name: api-gateway
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - MY_SECRET_KEY=${MY_SECRET_KEY}
+    depends_on:
+      - config-server
+      - eureka-server
+      - redis-ms
+    networks:
+      - insurance-net
+
+  # --- MESAJLAŞMA (KAFKA) ---
   zookeeper:
     image: confluentinc/cp-zookeeper:7.4.0
     container_name: zookeeper
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
-      ZOOKEEPER_TICK_TIME: 2000
+    networks:
+      - insurance-net
 
   kafka:
     image: confluentinc/cp-kafka:7.4.0
@@ -22,39 +108,69 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+    networks:
+      - insurance-net
 
-  postgres:
-    image: postgres:15
-    container_name: postgres-ms
-    restart: always
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
     ports:
-      - "5433:5432"
+      - "8098:8080"
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
+    depends_on:
+      - kafka
+    networks:
+      - insurance-net
+
+  # --- ELK STACK ---
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.12.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - elasticsearch-data:/usr/share/elasticsearch/data
+    networks:
+      - insurance-net
 
- ## auth-service:
-  ##  build: ./authService/authService
-    ##container_name: auth-service
-    ##ports:
-   ##   - "8081:8081"
-   ## depends_on:
-    ##  - postgres
-    ##env_file:
-     ## - .env
+  logstash:
+    image: docker.elastic.co/logstash/logstash:8.12.0
+    container_name: logstash
+    ports:
+      - "5044:5044"
+      - "5000:5000/tcp"
+      - "5000:5000/udp"
+      - "9600:9600"
+    volumes:
+      - ./logstash/pipeline:/usr/share/logstash/pipeline
+    depends_on:
+      - elasticsearch
+    networks:
+      - insurance-net
 
-  #user-service:
-   # build: ./userService/userService
-    #container_name: user-service
-  #  ports:
-   #   - "8082:8082"
-   # depends_on:
-    #  - postgres
-    #env_file:
-     # - .env
+  kibana:
+    image: docker.elastic.co/kibana/kibana:8.12.0
+    container_name: kibana
+    ports:
+      - "5601:5601"
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+    depends_on:
+      - elasticsearch
+    networks:
+      - insurance-net
+
+networks:
+  insurance-net:
+    driver: bridge
+
 
 volumes:
   postgres_data:
+  elasticsearch-data:
