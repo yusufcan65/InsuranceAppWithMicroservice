@@ -2,6 +2,8 @@ package insurance.paymentService.Entity;
 
 import insurance.insuranceCommon.BaseEntity;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Table;
 
 import java.time.LocalDate;
@@ -20,6 +22,10 @@ public class Payment extends BaseEntity {
     private Double amount;
     private Integer policyNumber;
     private UUID policyId;
+
+
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus status;
 
     public LocalDate getPaymentDate() {
         return paymentDate;
@@ -83,5 +89,13 @@ public class Payment extends BaseEntity {
 
     public void setPolicyId(UUID policyId) {
         this.policyId = policyId;
+    }
+
+    public PaymentStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(PaymentStatus status) {
+        this.status = status;
     }
 }

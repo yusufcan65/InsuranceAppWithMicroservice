@@ -1,8 +1,10 @@
 package insurance.paymentService.Service.Impl;
 
+
 import insurance.insuranceCommon.Event.PaymentEvents.PaymentCompletedEvent;
 import insurance.paymentService.Dto.*;
 import insurance.paymentService.Entity.Payment;
+import insurance.paymentService.Entity.PaymentStatus;
 import insurance.paymentService.Entity.PolicyCache;
 import insurance.paymentService.Exception.ResourceNotFoundException;
 import insurance.paymentService.Repository.PaymentRepository;
@@ -45,6 +47,7 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setCardOwner(request.cardOwner());
         payment.setPolicyId(policyCache.getId());
         payment.setPolicyNumber(policyCache.getPolicyNumber());
+        payment.setStatus(PaymentStatus.PENDING);
 
         Payment toSave = paymentRepository.save(payment);
 
@@ -56,6 +59,7 @@ public class PaymentServiceImpl implements PaymentService {
                         toSave.getPolicyNumber()
                 )
         );
+
 
         // kafka eklendi ve bu şekilde feign client devre dışı bırakıldı
       //  PolicyResponse updatePolicy = policyClient.activePolicy(policyResponse.id(), toSave.getId());

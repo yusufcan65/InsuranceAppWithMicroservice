@@ -16,5 +16,10 @@ public class KafkaConfig {
                 .replicas(1)
                 .build();
     }
+    @Bean
+    public NewTopic paymentFailedTopic() {
+        return TopicBuilder.name(KafkaTopics.PAYMENT_FAILED)
+                .partitions(1).replicas(1).build();
+    }
 
 }

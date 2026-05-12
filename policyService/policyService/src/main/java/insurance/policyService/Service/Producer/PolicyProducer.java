@@ -1,6 +1,8 @@
 package insurance.policyService.Service.Producer;
 
 import insurance.insuranceCommon.Event.BaseEvent;
+import insurance.insuranceCommon.Event.PaymentEvents.PaymentFailedEvent;
+import insurance.insuranceCommon.Event.PolicyEvents.PolicyActivatedEvent;
 import insurance.insuranceCommon.Event.PolicyEvents.PolicyDeleteEvent;
 import insurance.insuranceCommon.KafkaTopics;
 import insurance.insuranceCommon.Event.PolicyEvents.PolicyCreatedEvent;
@@ -30,5 +32,15 @@ public class PolicyProducer {
     }
     public void sendPolicyUpdated(PolicyCreatedEvent event) {
         kafkaTemplate.send(KafkaTopics.POLICY_UPDATED, event);
+    }
+
+    public void sendPolicyActivated(PolicyActivatedEvent event) {
+        log.info("Policy activated eventi gönderiliyor: {}", event.getPolicyId());
+        kafkaTemplate.send(KafkaTopics.POLICY_ACTIVATED, event);
+    }
+
+    public void sendPaymentFailed(PaymentFailedEvent event) {
+        log.info("Payment failed eventi gönderiliyor: {}", event.getPolicyId());
+        kafkaTemplate.send(KafkaTopics.PAYMENT_FAILED, event);
     }
 }

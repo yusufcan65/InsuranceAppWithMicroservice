@@ -81,6 +81,37 @@
 			<artifactId>spring-kafka</artifactId>
 		</dependency>
 
+
+		<!-- 1. Micrometer Core (Genelde actuator ile gelir ama garanti olsun) -->
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+
+
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-observation</artifactId>
+		</dependency>
+
+		<!-- 2. Tracing Bridge (Micrometer verilerini Brave formatına çevirir) -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-tracing-bridge-brave</artifactId>
+		</dependency>
+
+		<!-- 3. Zipkin Reporter (Verileri Zipkin sunucusuna taşır) -->
+		<dependency>
+			<groupId>io.zipkin.reporter2</groupId>
+			<artifactId>zipkin-reporter-brave</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+
     </dependencies>
 	<!-- SPRING CLOUD -->
 	<dependencyManagement>

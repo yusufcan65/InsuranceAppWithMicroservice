@@ -36,26 +36,26 @@ public class UserController {
         List<UserResponse> userResponses = userService.getUsers();
         return new ResponseEntity<>(userResponses,HttpStatus.OK);
     }
-    @GetMapping("/id/{id}")
+  /*  @GetMapping("/id/{id}")
     public ResponseEntity<Users> getUserById(@PathVariable UUID id){
         Users user = userService.getUserById(id);
         return new ResponseEntity<>(user,HttpStatus.OK);
-    }
-    @GetMapping("/user/{username}")
+    }*/
+    /*@GetMapping("/user/{username}")
     public ResponseEntity<Users> getByUsername(@PathVariable String username){
         Users user = userService.getUserByUsername(username);
         return new ResponseEntity<>(user, HttpStatus.OK);
-    }
-    @GetMapping("/internal/{username}")
+    }*/
+    @GetMapping("/internal/auth/{username}")
     public ResponseEntity<UserAuthResponse> getUserForAuth(@PathVariable String username){
         UserAuthResponse userAuthResponse = userService.getUserForAuth(username);
         return new ResponseEntity<>(userAuthResponse,HttpStatus.OK);
     }
-    @GetMapping("/internal/{id}")
+  /*  @GetMapping("/internal/customer/{id}")
     public ResponseEntity<CustomerUserDto> getCustomerUserById(@PathVariable UUID id){
         CustomerUserDto customerUserDto = userService.getCustomerUserById(id);
         return new ResponseEntity<>(customerUserDto,HttpStatus.OK);
-    }
+    }*/
 
     @GetMapping("/internal/feign/{id}")
     public ResponseEntity<UserFeignResponse> getUserForFeign(@PathVariable UUID id){

@@ -1,9 +1,13 @@
 package insurance.paymentService.Consumer;
 
 
+import insurance.insuranceCommon.Event.PaymentEvents.PaymentFailedEvent;
+import insurance.insuranceCommon.Event.PolicyEvents.PolicyActivatedEvent;
 import insurance.insuranceCommon.Event.PolicyEvents.PolicyCreatedEvent;
 import insurance.insuranceCommon.Event.PolicyEvents.PolicyDeleteEvent;
+import insurance.paymentService.Entity.PaymentStatus;
 import insurance.paymentService.Entity.PolicyCache;
+import insurance.paymentService.Repository.PaymentRepository;
 import insurance.paymentService.Repository.PolicyCacheRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,11 +20,13 @@ import java.util.UUID;
 @Component
 public class PolicyCacheConsumer {
     private final PolicyCacheRepository policyCacheRepository;
+    private final PaymentRepository paymentRepository;
 
     Logger log = LoggerFactory.getLogger(PolicyCacheConsumer.class);
 
-    public PolicyCacheConsumer(PolicyCacheRepository policyCacheRepository) {
+    public PolicyCacheConsumer(PolicyCacheRepository policyCacheRepository, PaymentRepository paymentRepository) {
         this.policyCacheRepository = policyCacheRepository;
+        this.paymentRepository = paymentRepository;
     }
 
     @KafkaListener(topics = KafkaTopics.POLICY_CREATED, groupId = "payment-cache-group-v99")
@@ -66,11 +72,11 @@ public class PolicyCacheConsumer {
             groupId = "payment-cache-group-v99",
             properties = {"spring.json.value.default.type=java.lang.String"}
     )
-    public void consumePolicyDeleted(PolicyDeleteEvent event) { // String yerine Event nesnesi
+    public void consumePolicyDeleted(PolicyDeleteEvent event) {
         log.info("Poliçe SİLME mesajı alındı. Event ID: {}, Poliçe ID: {}",
                 event.getEventId(), event.getPolicyId());
 
-        UUID policyId = event.getPolicyId(); // Artık manuel dönüştürmeye gerek yok!
+        UUID policyId = event.getPolicyId();
 
         if (policyCacheRepository.existsById(policyId)) {
             policyCacheRepository.deleteById(policyId);
@@ -78,5 +84,30 @@ public class PolicyCacheConsumer {
         } else {
             log.warn("Silinmek istenen poliçe cache'de bulunamadı: {}", policyId);
         }
+    }
+
+
+    // Poliçe aktifleşti → ödemeyi CONFIRMED yap
+    @KafkaListener(topics = KafkaTopics.POLICY_ACTIVATED, groupId = "payment-cache-group-v99")
+    public void handlePolicyActivated(PolicyActivatedEvent event) {
+        log.info("Policy activated alındı, ödeme confirmed yapılıyor: {}", event.getPaymentId());
+
+        paymentRepository.findById(event.getPaymentId()).ifPresent(payment -> {
+            payment.setStatus(PaymentStatus.CONFIRMED);
+            paymentRepository.save(payment);
+            log.info("Ödeme CONFIRMED yapıldı: {}", event.getPaymentId());
+        });
+    }
+
+    // Poliçe aktifleşemedi → ödemeyi FAILED yap
+    @KafkaListener(topics = KafkaTopics.PAYMENT_FAILED, groupId = "payment-cache-group-v99")
+    public void handlePaymentFailed(PaymentFailedEvent event) {
+        log.error("Payment failed alındı, ödeme iptal ediliyor: {}", event.getPaymentId());
+
+        paymentRepository.findById(event.getPaymentId()).ifPresent(payment -> {
+            payment.setStatus(PaymentStatus.FAILED);
+            paymentRepository.save(payment);
+            log.error("Ödeme FAILED yapıldı: {}", event.getPaymentId());
+        });
     }
 }

@@ -4,6 +4,7 @@ import insurance.customerService.Client.UserClient;
 import insurance.customerService.Dto.CustomerRequest;
 import insurance.customerService.Dto.CustomerResponse;
 import insurance.customerService.Dto.UserDTO;
+import insurance.customerService.Dto.UserResponse;
 import insurance.customerService.Entity.Customer;
 import insurance.customerService.Repository.CustomerRepository;
 import insurance.customerService.Service.CustomerService;
@@ -31,13 +32,13 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerResponse createCustomer(CustomerRequest customerRequest) {
 
-        UserDTO user = userClient.getByUserId(customerRequest.userId());
+        UserResponse user = userClient.getUserForFeign(customerRequest.userId());
 
         if(customerRepository.findByIdNumber(customerRequest.idNumber()).isPresent()){
             throw new RuntimeException("customer already exists");
         }
 
-        if(user == null){
+        if(user.id() == null){
             throw new RuntimeException("User Not Found");
         }
         Customer customer = new Customer();
@@ -48,7 +49,7 @@ public class CustomerServiceImpl implements CustomerService {
         customer.setEmail(customerRequest.email());
         customer.setDistrict(customerRequest.district());
         customer.setIdNumber(customerRequest.idNumber());
-        customer.setUserId(user.userId());
+        customer.setUserId(user.id());
         customer.setPhoneNumber(customerRequest.phoneNumber());
         customer.setSurname(customerRequest.surname());
 
