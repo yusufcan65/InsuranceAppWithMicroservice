@@ -3,9 +3,10 @@ package insurance.customerService.Service.Impl;
 import insurance.customerService.Client.UserClient;
 import insurance.customerService.Dto.CustomerRequest;
 import insurance.customerService.Dto.CustomerResponse;
-import insurance.customerService.Dto.UserDTO;
 import insurance.customerService.Dto.UserResponse;
 import insurance.customerService.Entity.Customer;
+import insurance.customerService.Exception.CustomerAlreadyExistsException;
+import insurance.customerService.Exception.CustomerNotFoundException;
 import insurance.customerService.Repository.CustomerRepository;
 import insurance.customerService.Service.CustomerService;
 import org.springframework.cache.annotation.CacheEvict;
@@ -35,12 +36,9 @@ public class CustomerServiceImpl implements CustomerService {
         UserResponse user = userClient.getUserForFeign(customerRequest.userId());
 
         if(customerRepository.findByIdNumber(customerRequest.idNumber()).isPresent()){
-            throw new RuntimeException("customer already exists");
+            throw new CustomerAlreadyExistsException("customer already exists by IdNumber "+customerRequest.idNumber());
         }
 
-        if(user.id() == null){
-            throw new RuntimeException("User Not Found");
-        }
         Customer customer = new Customer();
         customer.setCustomerNumber(generateUniqueCustomerNumber());
         customer.setCity(customerRequest.city());
@@ -74,7 +72,7 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     private Customer getById(UUID id){
-        Customer customer =  customerRepository.findById(id).orElseThrow(()-> new RuntimeException( "customer not found by Id "+ id));
+        Customer customer =  customerRepository.findById(id).orElseThrow(()-> new CustomerNotFoundException( "customer not found by Id "+ id));
         return customer;
     }
     private Integer generateUniqueCustomerNumber() {

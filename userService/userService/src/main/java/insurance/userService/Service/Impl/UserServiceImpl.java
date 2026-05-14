@@ -2,18 +2,17 @@ package insurance.userService.Service.Impl;
 
 import insurance.userService.Client.AuthClient;
 import insurance.userService.Dto.Auth.CreateAuthUserRequest;
-import insurance.userService.Dto.Customer.CustomerUserDto;
 import insurance.userService.Dto.UserAuthResponse;
 import insurance.userService.Dto.UserFeignResponse;
 import insurance.userService.Dto.UserRequest;
 import insurance.userService.Dto.UserResponse;
 import insurance.userService.Entity.Users;
+import insurance.userService.Exception.UserNotFoundException;
 import insurance.userService.Repository.UserRepository;
 import insurance.userService.Service.UserService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -50,13 +49,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Users getUserById(UUID id) {
-        Users user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("user not found"));
+        Users user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException("user not found by id "+id));
         return user;
-    }
-    @Override
-    public CustomerUserDto getCustomerUserById(UUID id){
-        Users user = getUserById(id);
-        return new CustomerUserDto(user.getId());
     }
 
     @Override
@@ -69,12 +63,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public Users getUserByUsername(String username) {
         Users user = userRepository.findByUsername(username);
+        if(user.getId() == null){
+            throw new UserNotFoundException("user not found by username "+username);
+        }
         return user;
     }
 
     @Override
     public UserAuthResponse getUserForAuth(String username) {
         Users users = getUserByUsername(username);
+
         return new UserAuthResponse(
                 users.getId(),
                 users.getUsername(),

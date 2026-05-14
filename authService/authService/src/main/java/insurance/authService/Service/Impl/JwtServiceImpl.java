@@ -1,6 +1,7 @@
 package insurance.authService.Service.Impl;
 
 import insurance.authService.Entity.AuthUser;
+import insurance.authService.Exception.TokenGenerationException;
 import insurance.authService.Service.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -65,7 +66,7 @@ public class JwtServiceImpl implements JwtService {
                     .compact();
         }
         catch (Exception e){
-            throw new RuntimeException("TokenErrorMessage.TOKEN_GENERATE_ERROR");
+            throw new TokenGenerationException("TokenErrorMessage.TOKEN_GENERATE_ERROR");
         }
 
     }

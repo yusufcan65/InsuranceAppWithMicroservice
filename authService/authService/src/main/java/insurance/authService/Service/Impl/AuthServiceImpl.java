@@ -4,6 +4,7 @@ import insurance.authService.Client.UserClient;
 import insurance.authService.Dto.*;
 import insurance.authService.Entity.AuthUser;
 import insurance.authService.Entity.Role;
+import insurance.authService.Exception.UsernameNotFoundException;
 import insurance.authService.Repository.AuthUserRepository;
 import insurance.authService.Service.AuthService;
 import insurance.authService.Service.JwtService;
@@ -11,7 +12,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

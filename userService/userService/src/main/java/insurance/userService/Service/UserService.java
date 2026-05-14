@@ -1,6 +1,5 @@
 package insurance.userService.Service;
 
-import insurance.userService.Dto.Customer.CustomerUserDto;
 import insurance.userService.Dto.UserAuthResponse;
 import insurance.userService.Dto.UserFeignResponse;
 import insurance.userService.Dto.UserRequest;
@@ -17,7 +16,6 @@ public interface UserService {
     List<UserResponse> getUsers();
     Users getUserByUsername(String username);
     UserAuthResponse getUserForAuth(String username);
-    CustomerUserDto getCustomerUserById(UUID id);
     UserFeignResponse userFeign(UUID id);
 
 }

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import java.util.UUID;
 
-@FeignClient(name = "userService") // Eureka'da kayıtlı olan isim
+@FeignClient(name = "userService")
 public interface UserClient {
 
     @GetMapping("/v1/user/internal/feign/{id}")
