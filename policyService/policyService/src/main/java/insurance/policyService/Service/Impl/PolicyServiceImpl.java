@@ -1,5 +1,7 @@
 package insurance.policyService.Service.Impl;
 
+import insurance.insuranceCommon.Event.PaymentEvents.PaymentFailedEvent;
+import insurance.insuranceCommon.Event.PolicyEvents.PolicyActivatedEvent;
 import insurance.insuranceCommon.Event.PolicyEvents.PolicyCreatedEvent;
 import insurance.insuranceCommon.Event.PolicyEvents.PolicyDeleteEvent;
 import insurance.policyService.Dto.PolicyRequest;
@@ -7,12 +9,12 @@ import insurance.policyService.Dto.PolicyResponse;
 import insurance.policyService.Dto.UpdatePolicyRequest;
 import insurance.policyService.Entity.Policy;
 import insurance.policyService.Exception.PolicyAlreadyActiveException;
+import insurance.policyService.Exception.PolicyAlreadyNotActiveException;
 import insurance.policyService.Exception.PolicyAlreadyPaidException;
 import insurance.policyService.Exception.PolicyNotFoundException;
+import insurance.policyService.Producer.PolicyProducer;
 import insurance.policyService.Repository.PolicyRepository;
 import insurance.policyService.Service.PolicyService;
-import insurance.policyService.Service.Producer.PolicyProducer;
-import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -25,7 +27,6 @@ import java.util.stream.Collectors;
 public class PolicyServiceImpl implements PolicyService {
 
     private final PolicyRepository policyRepository;
-
     private final PolicyProducer policyProducer;
 
     public PolicyServiceImpl(PolicyRepository policyRepository, PolicyProducer policyProducer) {
@@ -34,7 +35,6 @@ public class PolicyServiceImpl implements PolicyService {
     }
 
     @Override
-    @Transactional
     public PolicyResponse CreatePolicy(PolicyRequest request) {
         Policy policy = new Policy();
 
@@ -62,7 +62,6 @@ public class PolicyServiceImpl implements PolicyService {
         return toResponse(toSave);
     }
     @Override
-    @Transactional
     public PolicyResponse updatePolicy(UpdatePolicyRequest updateRequest){
 
         Policy policy = getById(updateRequest.policyId());
@@ -83,7 +82,6 @@ public class PolicyServiceImpl implements PolicyService {
 
     }
     @Override
-    @Transactional
     public PolicyResponse deletePolicy(UUID policyId) {
         Policy policy = getById(policyId);
 
@@ -139,8 +137,41 @@ public class PolicyServiceImpl implements PolicyService {
 
             Policy toActive = policyRepository.save(policy);
 
+            PolicyActivatedEvent policyActivatedEvent = new PolicyActivatedEvent(
+                    toActive.getId(),
+                    toActive.getPaymentId(),
+                    toActive.getPolicyNumber()
+
+            );
+
             return toResponse(toActive);
         }
+    }
+    @Override
+    public PolicyResponse rejectPolicy(UUID policyId){
+        Policy policy = getById(policyId);
+        if("T".equals(policy.getStatus()) || policy.getPaymentId() == null){
+            throw new PolicyAlreadyNotActiveException("this policy value is not pay please check policy payment status and try again");
+        }
+        else{
+
+            policy.setStatus("T");
+            int remainingDays = (int) (policy.getFinishDate().toEpochDay() - LocalDate.now().toEpochDay());
+            policy.setRemainderTime(remainingDays);
+            policy.setStartDate(null);
+
+            Policy toReject = policyRepository.save(policy);
+
+            PaymentFailedEvent paymentFailedEvent = new PaymentFailedEvent(
+                    toReject.getId(),
+                    toReject.getPaymentId(),
+                    "ROLLBACK: Policy activation failed and rolled back to status T."
+
+            );
+
+            return toResponse(toReject);
+        }
+
     }
 
     private Integer generateUniquePolicyNumber() {
@@ -177,7 +208,6 @@ public class PolicyServiceImpl implements PolicyService {
                 .map(this::toResponse).collect(Collectors.toList());
         return policyResponses;
     }
-
     private Policy toEntity(PolicyRequest request){
         Policy policy = new Policy();
         policy.setBranchCode(request.branchCode());

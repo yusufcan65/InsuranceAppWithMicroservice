@@ -21,6 +21,7 @@ public interface PolicyService {
     PolicyResponse getPolicyForPayment(UUID policyId);
 
     PolicyResponse activePolicy(UUID policyId, UUID paymentId);
+    PolicyResponse rejectPolicy(UUID policyId);
 
 
 

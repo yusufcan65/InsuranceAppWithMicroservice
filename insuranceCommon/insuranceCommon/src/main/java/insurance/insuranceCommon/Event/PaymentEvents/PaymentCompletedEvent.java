@@ -1,12 +1,11 @@
 package insurance.insuranceCommon.Event.PaymentEvents;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import insurance.insuranceCommon.Event.AbstractBaseEvent;
 
 import java.io.Serializable;
 import java.util.UUID;
 
-public class PaymentCompletedEvent extends AbstractBaseEvent {
+public class PaymentCompletedEvent implements Serializable {
 
     @JsonProperty("policyId")
     private UUID policyId;

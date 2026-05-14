@@ -7,20 +7,20 @@ import jakarta.persistence.Table;
 import java.util.UUID;
 
 @Entity
-@Table(name = "policy_cache")
-public class PolicyCache {
+@Table(name = "policy_projection_table")
+public class PolicyProjection {
     @Id
     private UUID id;
     private Double prim;
     private Integer policyNumber;
 
-    public PolicyCache(UUID id, Double prim, Integer policyNumber) {
+    public PolicyProjection(UUID id, Double prim, Integer policyNumber) {
         this.id = id;
         this.prim = prim;
         this.policyNumber = policyNumber;
     }
 
-    public PolicyCache() {
+    public PolicyProjection() {
     }
 
     public UUID getId() {

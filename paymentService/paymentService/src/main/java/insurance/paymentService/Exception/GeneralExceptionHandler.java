@@ -19,4 +19,24 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<RestResponse<String>> resourceNotFoundException(ResourceNotFoundException exception){
         return new ResponseEntity<>(RestResponse.error(exception.getMessage()), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(InvalidPolicyProjectionEventException.class)
+    public ResponseEntity<RestResponse<String>> invalidPolicyProjectionEventException(InvalidPolicyProjectionEventException exception){
+        return new ResponseEntity<>(RestResponse.error(exception.getMessage()), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(PaymentNotFoundException.class)
+    public ResponseEntity<RestResponse<String>> paymentNotFoundException(PaymentNotFoundException exception){
+        return new ResponseEntity<>(RestResponse.error(exception.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(PolicyProjectionNotFoundException.class)
+    public ResponseEntity<RestResponse<String>> policyProjectionNotFoundException(PolicyProjectionNotFoundException exception){
+        return new ResponseEntity<>(RestResponse.error(exception.getMessage()), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(PolicyProjectionAlreadyExistsException.class)
+    public ResponseEntity<RestResponse<String>> policyProjectionAlreadyExistsException(PolicyProjectionAlreadyExistsException exception){
+        return new ResponseEntity<>(RestResponse.error(exception.getMessage()), HttpStatus.CONFLICT);
+    }
 }

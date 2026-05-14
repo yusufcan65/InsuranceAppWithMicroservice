@@ -23,4 +23,9 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<RestResponse<String>> policyAlreadyActiveException(PolicyAlreadyActiveException exception){
         return new ResponseEntity<>(RestResponse.error(exception.getMessage()),HttpStatus.UNPROCESSABLE_ENTITY);
     }
+
+    @ExceptionHandler(PolicyAlreadyNotActiveException.class)
+    public ResponseEntity<RestResponse<String>> policyAlreadyNotActiveException(PolicyAlreadyNotActiveException exception){
+        return new ResponseEntity<>(RestResponse.error(exception.getMessage()), HttpStatus.CONFLICT);
+    }
 }
