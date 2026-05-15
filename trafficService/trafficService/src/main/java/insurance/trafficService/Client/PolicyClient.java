@@ -24,7 +24,7 @@ public interface PolicyClient {
     @CircuitBreaker(name = "policyServiceCB", fallbackMethod = "policyFallBack")
     RestResponse<PolicyResponse> createPolicy(@RequestBody CreateTrafficPolicyRequest request);
 
-    default PolicyResponse policyFallBack(CreateTrafficPolicyRequest request, Throwable e){
+    default RestResponse<PolicyResponse> policyFallBack(CreateTrafficPolicyRequest request, Throwable e){
         logger.error("policy service hata verdi ve poliçe kaydı gerçekleşmedi :",e.getMessage());
         throw new ServiceUnavailableException("Policy service meşgul daha sonra tekrar deneyiniz.");
     }

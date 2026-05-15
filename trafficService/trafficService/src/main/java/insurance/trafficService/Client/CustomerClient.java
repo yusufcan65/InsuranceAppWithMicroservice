@@ -24,10 +24,8 @@ public interface CustomerClient {
     @CircuitBreaker( name = "customerServiceCB" ,fallbackMethod = "customerFallBack")
     RestResponse<CustomerResponse> getCustomerForFeign(@PathVariable UUID id);
 
-    default CustomerResponse customerFallBack(UUID id, Throwable e){
+    default RestResponse<CustomerResponse> customerFallBack(UUID id, Throwable e){
         logger.error("Customer service is not found with id :{} | message : {}",id,e.getMessage());
-
-        throw new ServiceUnavailableException("Customer Service is not have a response");
-
+        throw new ServiceUnavailableException("Customer Service is not have a response please try again after 5 minute");
     }
 }

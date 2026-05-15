@@ -1,16 +1,17 @@
-package insurance.trafficService.Client;
+package insurance.kaskoService.Client;
 
 
 import insurance.insuranceCommon.RestResponse;
-import insurance.trafficService.Exception.ServiceUnavailableException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
+import insurance.kaskoService.Dto.UserResponse;
+import insurance.kaskoService.Exception.ServiceUnavailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import insurance.trafficService.Dto.UserResponse;
+
 
 import java.util.UUID;
 
@@ -29,7 +30,6 @@ public interface UserClient {
 
         logger.error("User service is not found with id :{} | message : {}",id,e.getMessage());
 
-        throw new ServiceUnavailableException("User Service not have a response please again 5 minute after");
+        throw new ServiceUnavailableException("User Service not have a response");
     }
-
 }
