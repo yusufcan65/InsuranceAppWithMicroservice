@@ -1,6 +1,8 @@
 package insurance.userService.Client;
 
+import insurance.insuranceCommon.RestResponse;
 import insurance.userService.Dto.Auth.CreateAuthUserRequest;
+import insurance.userService.Dto.UserAuthResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,5 +11,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface AuthClient {
 
     @PostMapping("/v1/auth/internal/create")
-    void createAuthUser(@RequestBody CreateAuthUserRequest request);
+    RestResponse<UserAuthResponse> createAuthUser(@RequestBody CreateAuthUserRequest request);
 }
