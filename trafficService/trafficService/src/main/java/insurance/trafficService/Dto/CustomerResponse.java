@@ -1,4 +1,4 @@
-package trafficService.trafficService.Dto;
+package insurance.trafficService.Dto;
 
 import java.time.LocalDate;
 import java.util.UUID;

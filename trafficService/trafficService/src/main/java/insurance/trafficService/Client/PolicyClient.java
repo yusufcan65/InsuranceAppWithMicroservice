@@ -1,7 +1,9 @@
-package trafficService.trafficService.Client;
+package insurance.trafficService.Client;
 
 
 import insurance.insuranceCommon.RestResponse;
+import insurance.trafficService.Dto.PolicyResponse;
+import insurance.trafficService.Exception.ServiceUnavailableException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
@@ -9,9 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import trafficService.trafficService.Dto.CreateTrafficPolicyRequest;
-import trafficService.trafficService.Dto.PolicyResponse;
-import trafficService.trafficService.Exception.ServiceUnavailableException;
+import insurance.trafficService.Dto.CreateTrafficPolicyRequest;
 
 
 @FeignClient(name = "policyService")

@@ -1,4 +1,4 @@
-package trafficService.trafficService.Exception;
+package insurance.trafficService.Exception;
 
 import insurance.insuranceCommon.RestResponse;
 import org.springframework.http.HttpStatus;

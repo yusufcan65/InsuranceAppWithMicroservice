@@ -33,7 +33,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerResponse createCustomer(CustomerRequest customerRequest) {
 
-        UserResponse user = userClient.getUserForFeign(customerRequest.userId());
+        UserResponse user = userClient.getUserForFeign(customerRequest.userId()).getData();
 
         if(customerRepository.findByIdNumber(customerRequest.idNumber()).isPresent()){
             throw new CustomerAlreadyExistsException("customer already exists by IdNumber "+customerRequest.idNumber());

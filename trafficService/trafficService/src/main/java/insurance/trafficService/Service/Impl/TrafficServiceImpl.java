@@ -1,15 +1,15 @@
-package trafficService.trafficService.Service.Impl;
+package insurance.trafficService.Service.Impl;
 
 import insurance.insuranceCommon.RestResponse;
+import insurance.trafficService.Client.CustomerClient;
+import insurance.trafficService.Dto.*;
+import insurance.trafficService.Repository.TrafficRepository;
 import org.springframework.stereotype.Service;
-import trafficService.trafficService.Client.CustomerClient;
-import trafficService.trafficService.Client.PolicyClient;
-import trafficService.trafficService.Client.UserClient;
-import trafficService.trafficService.Client.VehicleClient;
-import trafficService.trafficService.Dto.*;
-import trafficService.trafficService.Entity.TrafficPolicyCars;
-import trafficService.trafficService.Repository.TrafficRepository;
-import trafficService.trafficService.Service.TrafficService;
+import insurance.trafficService.Client.PolicyClient;
+import insurance.trafficService.Client.UserClient;
+import insurance.trafficService.Client.VehicleClient;
+import insurance.trafficService.Entity.TrafficPolicyCars;
+import insurance.trafficService.Service.TrafficService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -36,11 +36,15 @@ public class TrafficServiceImpl implements TrafficService {
     @Override
     public TrafficPolicyDetailResponse createTrafficPolicyCreate(TrafficRequest trafficRequest) {
 
-        UserResponse userResponse = userClient.getUserForFeign(trafficRequest.userId());
-        CustomerResponse customerResponse = customerClient.getCustomerForFeign(trafficRequest.customerId());
-        CarResponse carResponse = vehicleClient.getCarById(trafficRequest.carId());
+        UserResponse userResponse = userClient.getUserForFeign(trafficRequest.userId()).getData();
 
-        Double prim = calculateInsuranceValue(carResponse.carValue());
+        RestResponse<CustomerResponse> customerResponse1 = customerClient.getCustomerForFeign(trafficRequest.customerId());
+        CustomerResponse customerResponse = customerResponse1.getData();
+
+        RestResponse<CarResponse> carResponse = vehicleClient.getCarById(trafficRequest.carId());
+        CarResponse carResponse1= carResponse.getData();
+
+        Double prim = calculateInsuranceValue(carResponse1.carValue());
 
         CreateTrafficPolicyRequest request = new CreateTrafficPolicyRequest(
                 prim,
@@ -59,7 +63,7 @@ public class TrafficServiceImpl implements TrafficService {
         PolicyResponse policyResponse1 = policyResponse.getData();
 
         TrafficPolicyCars trafficPolicyCars = new TrafficPolicyCars();
-        trafficPolicyCars.setCarId(carResponse.id());
+        trafficPolicyCars.setCarId(carResponse1.id());
         trafficPolicyCars.setPolicyId(policyResponse1.id());
         trafficPolicyCars.setCustomerId(customerResponse.id());
 

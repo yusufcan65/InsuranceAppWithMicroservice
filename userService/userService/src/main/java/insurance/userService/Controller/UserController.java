@@ -1,5 +1,6 @@
 package insurance.userService.Controller;
 
+import insurance.insuranceCommon.RestResponse;
 import insurance.userService.Dto.UserAuthResponse;
 import insurance.userService.Dto.UserFeignResponse;
 import insurance.userService.Dto.UserRequest;
@@ -23,26 +24,26 @@ public class UserController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<UserResponse> createUser(@RequestBody UserRequest userRequest){
+    public ResponseEntity<RestResponse<UserResponse>> createUser(@RequestBody UserRequest userRequest){
         UserResponse userResponse = userService.createUser(userRequest);
-        return  new ResponseEntity<>(userResponse, HttpStatus.OK);
+        return  new ResponseEntity<>(RestResponse.of(userResponse), HttpStatus.OK);
     }
 
     @GetMapping()
-    public ResponseEntity<List<UserResponse>> getAllUsers(){
+    public ResponseEntity<RestResponse<List<UserResponse>>> getAllUsers(){
         List<UserResponse> userResponses = userService.getUsers();
-        return new ResponseEntity<>(userResponses,HttpStatus.OK);
+        return new ResponseEntity<>(RestResponse.of(userResponses),HttpStatus.OK);
     }
 
     @GetMapping("/internal/auth/{username}")
-    public ResponseEntity<UserAuthResponse> getUserForAuth(@PathVariable String username){
+    public ResponseEntity<RestResponse<UserAuthResponse>> getUserForAuth(@PathVariable String username){
         UserAuthResponse userAuthResponse = userService.getUserForAuth(username);
-        return new ResponseEntity<>(userAuthResponse,HttpStatus.OK);
+        return new ResponseEntity<>(RestResponse.of(userAuthResponse),HttpStatus.OK);
     }
 
     @GetMapping("/internal/feign/{id}")
-    public ResponseEntity<UserFeignResponse> getUserForFeign(@PathVariable UUID id){
+    public ResponseEntity<RestResponse<UserFeignResponse>> getUserForFeign(@PathVariable UUID id){
         UserFeignResponse userFeignResponse = userService.userFeign(id);
-        return new ResponseEntity<>(userFeignResponse,HttpStatus.OK);
+        return new ResponseEntity<>(RestResponse.of(userFeignResponse),HttpStatus.OK);
     }
 }

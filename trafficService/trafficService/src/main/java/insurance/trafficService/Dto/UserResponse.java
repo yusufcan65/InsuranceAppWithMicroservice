@@ -1,4 +1,4 @@
-package trafficService.trafficService.Dto;
+package insurance.trafficService.Dto;
 
 import java.util.UUID;
 

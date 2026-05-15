@@ -1,6 +1,8 @@
-package trafficService.trafficService.Client;
+package insurance.trafficService.Client;
 
 
+import insurance.insuranceCommon.RestResponse;
+import insurance.trafficService.Exception.ServiceUnavailableException;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.retry.annotation.Retry;
 import org.slf4j.Logger;
@@ -8,8 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import trafficService.trafficService.Dto.CarResponse;
-import trafficService.trafficService.Exception.ServiceUnavailableException;
+import insurance.trafficService.Dto.CarResponse;
 
 import java.util.UUID;
 
@@ -21,7 +22,7 @@ public interface VehicleClient {
     @GetMapping("/v1/vehicle/internal/feign/{id}")
     @Retry(name = "vehicleRetry")
     @CircuitBreaker(name = "vehicleServiceCB", fallbackMethod = "vehicleFallBack")
-    CarResponse getCarById(@PathVariable UUID id);
+    RestResponse<CarResponse> getCarById(@PathVariable UUID id);
 
     default CarResponse vehicleFallBack(UUID id, Throwable e){
         log.error("Car service is not found with id :{} | message : {}",id,e.getMessage());

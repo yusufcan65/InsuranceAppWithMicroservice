@@ -1,6 +1,7 @@
 package kaskoService.kaskoService.Client;
 
 
+import insurance.insuranceCommon.RestResponse;
 import kaskoService.kaskoService.Dto.UserResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,5 +14,5 @@ import java.util.UUID;
 public interface UserClient {
 
     @GetMapping("/v1/user/internal/feign/{id}")
-    UserResponse getUserForFeign(@PathVariable UUID id);
+    RestResponse<UserResponse> getUserForFeign(@PathVariable UUID id);
 }

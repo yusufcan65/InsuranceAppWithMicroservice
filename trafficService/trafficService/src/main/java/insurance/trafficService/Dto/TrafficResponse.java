@@ -1,4 +1,4 @@
-package trafficService.trafficService.Dto;
+package insurance.trafficService.Dto;
 
 import io.swagger.v3.oas.models.media.UUIDSchema;
 

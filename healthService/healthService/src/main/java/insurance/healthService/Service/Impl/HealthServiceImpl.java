@@ -34,8 +34,10 @@ public class HealthServiceImpl implements HealthService {
     @Override
     public HealthPolicyResponse createHealthPolicy(HealthRequest request) {
 
-        UserResponse userResponse = userClient.getUserForFeign(request.userId());
-        CustomerResponse customerResponse = customerClient.getCustomerForFeign(request.customerId());
+        UserResponse userResponse = userClient.getUserForFeign(request.userId()).getData();
+        RestResponse<CustomerResponse> customerResponse1 = customerClient.getCustomerForFeign(request.customerId());
+        CustomerResponse customerResponse = customerResponse1.getData();
+
 
         Double prim = calculateInsuranceValue(customerResponse.birthDate(), request.smokeStatus(),
                 request.sporStatus(), request.operationStatus(), request.chronicDiseaseStatus());
@@ -94,8 +96,6 @@ public class HealthServiceImpl implements HealthService {
     private LocalDate calculateFinishDate(LocalDate startDate) {
         return startDate.plusDays(15);
     }
-
-
 
     public double calculateInsuranceValue(LocalDate birthDate, String smokeStatus,
                                           String sporStatus, String operationStatus,

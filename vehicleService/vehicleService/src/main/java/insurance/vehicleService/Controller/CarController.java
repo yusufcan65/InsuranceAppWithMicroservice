@@ -1,5 +1,6 @@
 package insurance.vehicleService.Controller;
 
+import insurance.insuranceCommon.RestResponse;
 import insurance.vehicleService.Dto.CarRequest;
 import insurance.vehicleService.Dto.CarResponse;
 import insurance.vehicleService.Service.CarService;
@@ -22,19 +23,19 @@ public class CarController {
 
 
     @GetMapping("/internal/feign/{id}")
-    public ResponseEntity<CarResponse> getCarForFeign(@PathVariable UUID id){
+    public ResponseEntity<RestResponse<CarResponse>> getCarForFeign(@PathVariable UUID id){
         CarResponse carResponse = carService.getCarById(id);
-        return new ResponseEntity<>(carResponse, HttpStatus.OK);
+        return new ResponseEntity<>(RestResponse.of(carResponse), HttpStatus.OK);
     }
     @GetMapping()
-    public ResponseEntity<List<CarResponse>> getAllCars(){
+    public ResponseEntity<RestResponse<List<CarResponse>>> getAllCars(){
         List<CarResponse> carResponses = carService.getAllCars();
-        return new ResponseEntity<>(carResponses,HttpStatus.OK);
+        return new ResponseEntity<>(RestResponse.of(carResponses),HttpStatus.OK);
     }
     @PostMapping("/create")
-    public ResponseEntity<CarResponse> createCar(@RequestBody CarRequest request){
+    public ResponseEntity<RestResponse<CarResponse>> createCar(@RequestBody CarRequest request){
         CarResponse carResponse = carService.createCar(request);
-        return new ResponseEntity<>(carResponse,HttpStatus.OK);
+        return new ResponseEntity<>(RestResponse.of(carResponse),HttpStatus.OK);
     }
 
 }

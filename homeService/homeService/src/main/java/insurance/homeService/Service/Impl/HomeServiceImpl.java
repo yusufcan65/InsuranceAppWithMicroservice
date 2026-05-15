@@ -33,8 +33,9 @@ public class HomeServiceImpl implements HomeService {
     @Override
     public DaskResponse createDaskPolicy(DaskRequest daskRequest) {
 
-        UserResponse user = userClient.getUserForFeign(daskRequest.userId());
-        CustomerResponse customer = customerClient.getCustomerForFeign(daskRequest.customerId());
+        UserResponse user = userClient.getUserForFeign(daskRequest.userId()).getData();
+        RestResponse<CustomerResponse> customer = customerClient.getCustomerForFeign(daskRequest.customerId());
+        CustomerResponse customerResponse = customer.getData();
 
         Double prim = calculateInsuranceValue(daskRequest.squareMeter(),daskRequest.floorNumber(),
                 daskRequest.numberBuildFloor(), daskRequest.damageState(), daskRequest.buildingAge());
@@ -42,13 +43,13 @@ public class HomeServiceImpl implements HomeService {
 
         CreateDaskPolicyRequest policyRequest = new CreateDaskPolicyRequest(
                 prim,
-                customer.customerNumber(),
+                customerResponse.customerNumber(),
                 "199",
                 "T",
                 15,
                 LocalDate.now(),
                 calculateFinishDate(LocalDate.now()),
-                customer.id(),
+                customerResponse.id(),
                 user.id()
         );
         RestResponse<PolicyResponse> policyResponse = policyClient.createPolicy(policyRequest);
@@ -62,14 +63,14 @@ public class HomeServiceImpl implements HomeService {
         home.setDamageState(daskRequest.damageState());
         home.setSquareMeter(daskRequest.squareMeter());
         home.setFloorNumber(daskRequest.floorNumber());
-        home.setCustomerId(customer.id());
+        home.setCustomerId(customerResponse.id());
         home.setNumberBuildFloor(daskRequest.numberBuildFloor());
 
         Home toSave = homeRepository.save(home);
 
         HomeResponse  homeResponse = toResponse(toSave);
 
-        DaskResponse daskResponse = new DaskResponse(homeResponse,policyResponse1,customer,user);
+        DaskResponse daskResponse = new DaskResponse(homeResponse,policyResponse1,customerResponse,user);
 
         return daskResponse;
     }

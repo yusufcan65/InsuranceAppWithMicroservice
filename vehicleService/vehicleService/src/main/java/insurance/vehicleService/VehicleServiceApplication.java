@@ -1,5 +1,6 @@
 package insurance.vehicleService;
 
+
 import insurance.insuranceCommon.Config.ObservationConfig;
 import insurance.insuranceCommon.Config.SwaggerConfig;
 import org.springframework.boot.SpringApplication;

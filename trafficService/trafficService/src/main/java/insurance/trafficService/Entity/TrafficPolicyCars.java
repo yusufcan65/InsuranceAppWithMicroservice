@@ -1,4 +1,4 @@
-package trafficService.trafficService.Entity;
+package insurance.trafficService.Entity;
 
 import insurance.insuranceCommon.BaseEntity;
 import jakarta.persistence.Entity;

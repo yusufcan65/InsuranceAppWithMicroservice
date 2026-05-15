@@ -1,4 +1,4 @@
-package trafficService.trafficService.Exception;
+package insurance.trafficService.Exception;
 
 public class ServiceUnavailableException extends RuntimeException{
     public ServiceUnavailableException( String message){

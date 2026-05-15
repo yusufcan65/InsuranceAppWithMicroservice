@@ -1,7 +1,7 @@
-package trafficService.trafficService.Repository;
+package insurance.trafficService.Repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
-import trafficService.trafficService.Entity.TrafficPolicyCars;
+import insurance.trafficService.Entity.TrafficPolicyCars;
 
 import java.util.UUID;
 

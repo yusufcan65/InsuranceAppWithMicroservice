@@ -1,4 +1,4 @@
-package trafficService.trafficService;
+package insurance.trafficService;
 
 import insurance.insuranceCommon.Config.ObservationConfig;
 import insurance.insuranceCommon.Config.SwaggerConfig;

@@ -3,6 +3,7 @@ package insurance.vehicleService.Service.Impl;
 import insurance.vehicleService.Dto.CarRequest;
 import insurance.vehicleService.Dto.CarResponse;
 import insurance.vehicleService.Entity.Cars;
+import insurance.vehicleService.Exception.VehicleNotFoundException;
 import insurance.vehicleService.Repository.CarRepository;
 import insurance.vehicleService.Service.CarService;
 import org.springframework.cache.annotation.CacheEvict;
@@ -25,7 +26,7 @@ public class CarServiceImpl implements CarService {
     @Cacheable(value = "cars", key = "#id")
     @Override
     public CarResponse getCarById(UUID id) {
-        Cars car = carRepository.findById(id).orElseThrow(()-> new RuntimeException("car not found by id"+id));
+        Cars car = carRepository.findById(id).orElseThrow(()-> new VehicleNotFoundException("Vehicle not found by id"+id));
 
         return toResponse(car);
     }

@@ -1,4 +1,4 @@
-package trafficService.trafficService.Controller;
+package insurance.trafficService.Controller;
 
 
 import insurance.insuranceCommon.RestResponse;
@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import trafficService.trafficService.Dto.TrafficPolicyDetailResponse;
-import trafficService.trafficService.Dto.TrafficRequest;
-import trafficService.trafficService.Service.TrafficService;
+import insurance.trafficService.Dto.TrafficPolicyDetailResponse;
+import insurance.trafficService.Dto.TrafficRequest;
+import insurance.trafficService.Service.TrafficService;
 
 @RestController
 @RequestMapping("/v1/traffic")

@@ -37,8 +37,11 @@ public class KaskoServiceImpl implements KaskoService {
     @Override
     public KaskoPolicyDetailResponse createKaskoPolicyCreate(KaskoRequest kaskoRequest) {
 
-        UserResponse userResponse = userClient.getUserForFeign(kaskoRequest.userId());
-        CustomerResponse customerResponse = customerClient.getCustomerForFeign(kaskoRequest.customerId());
+        UserResponse userResponse = userClient.getUserForFeign(kaskoRequest.userId()).getData();
+
+        RestResponse<CustomerResponse> customerResponse1 = customerClient.getCustomerForFeign(kaskoRequest.customerId());
+        CustomerResponse customerResponse = customerResponse1.getData();
+
         CarResponse carResponse = vehicleClient.getCarById(kaskoRequest.carId());
 
         Double prim = calculateInsuranceValue(carResponse.carValue());
