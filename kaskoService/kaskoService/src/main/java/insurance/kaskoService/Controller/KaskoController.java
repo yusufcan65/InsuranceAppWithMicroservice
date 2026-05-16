@@ -1,5 +1,6 @@
 package insurance.kaskoService.Controller;
 
+import insurance.insuranceCommon.RestResponse;
 import insurance.kaskoService.Dto.KaskoPolicyDetailResponse;
 import insurance.kaskoService.Dto.KaskoRequest;
 import insurance.kaskoService.Service.KaskoService;
@@ -22,8 +23,8 @@ public class KaskoController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<KaskoPolicyDetailResponse> createKaskoPolicy(@RequestBody KaskoRequest kaskoRequest){
+    public ResponseEntity<RestResponse<KaskoPolicyDetailResponse>> createKaskoPolicy(@RequestBody KaskoRequest kaskoRequest){
         KaskoPolicyDetailResponse kaskoPolicyDetailResponse = kaskoService.createKaskoPolicyCreate(kaskoRequest);
-        return new ResponseEntity<>(kaskoPolicyDetailResponse, HttpStatus.OK);
+        return new ResponseEntity<>(RestResponse.of(kaskoPolicyDetailResponse), HttpStatus.OK);
     }
 }

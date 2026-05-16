@@ -4,6 +4,7 @@ import insurance.healthService.Dto.HealthPolicyResponse;
 import insurance.healthService.Dto.HealthRequest;
 import insurance.healthService.Dto.HealthResponse;
 import insurance.healthService.Service.HealthService;
+import insurance.insuranceCommon.RestResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,14 +22,14 @@ public class HealthController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<HealthPolicyResponse> createHealthPolicy(@RequestBody HealthRequest healthRequest){
+    public ResponseEntity<RestResponse<HealthPolicyResponse>> createHealthPolicy(@RequestBody HealthRequest healthRequest){
         HealthPolicyResponse healthPolicyResponse = healthService.createHealthPolicy(healthRequest);
-        return new ResponseEntity<>(healthPolicyResponse, HttpStatus.OK);
+        return new ResponseEntity<>(RestResponse.of(healthPolicyResponse), HttpStatus.OK);
     }
 
     @GetMapping()
-    public ResponseEntity<List<HealthResponse>> getAllHealths(){
+    public ResponseEntity<RestResponse<List<HealthResponse>>> getAllHealths(){
         List<HealthResponse> healthResponses = healthService.getAllHealths();
-        return new ResponseEntity<>(healthResponses,HttpStatus.OK);
+        return new ResponseEntity<>(RestResponse.of(healthResponses),HttpStatus.OK);
     }
 }

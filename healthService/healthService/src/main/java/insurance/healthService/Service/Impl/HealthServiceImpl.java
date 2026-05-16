@@ -86,7 +86,6 @@ public class HealthServiceImpl implements HealthService {
     public int calculateAgeCustomer(LocalDate birthDate){
         LocalDate currentDate = LocalDate.now();
 
-        // Doğrudan yaşı hesaplar
         Period period = Period.between(birthDate, currentDate);
 
         int age = period.getYears();

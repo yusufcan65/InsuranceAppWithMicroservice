@@ -3,6 +3,7 @@ package insurance.homeService.Controller;
 import insurance.homeService.Dto.DaskRequest;
 import insurance.homeService.Dto.DaskResponse;
 import insurance.homeService.Service.HomeService;
+import insurance.insuranceCommon.RestResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +22,8 @@ public class HomeController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<DaskResponse> createDaskPolicy(@RequestBody DaskRequest request){
+    public ResponseEntity<RestResponse<DaskResponse>> createDaskPolicy(@RequestBody DaskRequest request){
         DaskResponse daskResponse = homeService.createDaskPolicy(request);
-        return new ResponseEntity<>(daskResponse, HttpStatus.OK);
+        return new ResponseEntity<>(RestResponse.of(daskResponse), HttpStatus.OK);
     }
 }

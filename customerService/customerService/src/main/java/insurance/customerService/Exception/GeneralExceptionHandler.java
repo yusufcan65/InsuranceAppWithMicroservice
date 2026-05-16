@@ -19,4 +19,11 @@ public class GeneralExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<RestResponse<String>> customerNotFoundException(CustomerNotFoundException exception){
         return new ResponseEntity<>(RestResponse.error(exception.getMessage()), HttpStatus.NOT_FOUND);
     }
+
+    @ExceptionHandler(ServiceUnavailableException.class)
+    public ResponseEntity<RestResponse<Object>> serviceUnavailableException(ServiceUnavailableException exception){
+        RestResponse<Object> response = RestResponse.error(null);
+        response.setMessage(exception.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.SERVICE_UNAVAILABLE);
+    }
 }
