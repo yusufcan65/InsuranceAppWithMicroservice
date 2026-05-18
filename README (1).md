@@ -390,12 +390,6 @@ curl http://localhost:8091/actuator/health  # payment-service
 
 ---
 
-## License
-
-This project is licensed under the MIT License.
-
----
-
 <div align="center">
   <sub>Built with ☕ Java & Spring Cloud</sub>
 </div>
