@@ -1,49 +1,7 @@
-server:
-  port: 8084
-
 spring:
-  profiles:
-    active: dev
   application:
     name: customerService
-  datasource:
-    url: ${DB_URL}
-    username: ${DB_USER}
-    password: ${DB_PASS}
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
-  sql:
-    init:
-      mode: always
-  data:
-    redis:
-      host: localhost
-      port: 6379
-
-  cache:
-    type: redis
-    redis:
-    time-to-live: 3600000  # 1 saat, milisaniye cinsinden
-
-eureka:
-  instance:
-    prefer-ip-address: true
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-
-springdoc:
-  api-docs:
-    path: /v3/api-docs
-  swagger-ui:
-    enabled: false
-  servers:
-    - url: http://localhost:8083
-      description: API Gateway
-
-logging:
-  level:
-    org.springframework.cache: TRACE
-    org.springframework.data.redis: DEBUG
+  profiles:
+    active: ${SPRING_PROFILES_ACTIVE:dev}
+  config:
+    import: "optional:configserver:${CONFIG_SERVER_URL:http://localhost:8888}"
