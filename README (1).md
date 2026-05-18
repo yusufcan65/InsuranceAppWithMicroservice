@@ -216,7 +216,7 @@ Create a `.env` file in the project root. **Never commit this file to Git.**
 ```env
 # === DATABASE ===
 DB_PORT=5432
-DB_USERNAME=postgres
+DB_USERNAME=your_postgres_username
 DB_PASSWORD=your_postgres_password
 
 # Per-service databases
@@ -258,8 +258,8 @@ Content-Type: application/json
 
 {
   "username": "johndoe",
-  "email": "john@example.com",
-  "password": "securepassword"
+  "password": "securepassword",
+  "role": "ROLE_USER"
 }
 ```
 
