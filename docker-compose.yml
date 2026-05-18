@@ -14,6 +14,12 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${DB_USERNAME}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     networks:
       - insurance-net
 
@@ -23,6 +29,12 @@ services:
     container_name: redis-ms
     ports:
       - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
     networks:
       - insurance-net
 
@@ -66,6 +78,12 @@ services:
     depends_on:
       config-server:
         condition: service_healthy
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
     networks:
       - insurance-net
 
@@ -79,9 +97,12 @@ services:
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - MY_SECRET_KEY=${MY_SECRET_KEY}
     depends_on:
-      - config-server
-      - eureka-server
-      - redis-ms
+      config-server:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      redis-ms:
+        condition: service_healthy
     networks:
       - insurance-net
 
@@ -108,6 +129,14 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+    healthcheck:
+      test: [ "CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:29092" ]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
     networks:
       - insurance-net
 
@@ -136,6 +165,12 @@ services:
       - "9200:9200"
     volumes:
       - elasticsearch-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -f http://localhost:9200/_cluster/health || exit 1" ]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
     networks:
       - insurance-net
 
@@ -149,8 +184,15 @@ services:
       - "9600:9600"
     volumes:
       - ./logstash/pipeline:/usr/share/logstash/pipeline
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9600/_node/stats || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
     depends_on:
-      - elasticsearch
+      elasticsearch:
+        condition: service_healthy
     networks:
       - insurance-net
 
@@ -166,10 +208,378 @@ services:
     networks:
       - insurance-net
 
+
+  # --- MİKROSERVİSLER ---
+  auth-service:
+    build: ./authService/authService
+    container_name: auth-service
+    ports:
+      - "8081:8081"
+    env_file:
+      - .env
+    environment:
+      - DB_URL=jdbc:postgresql://insurance-postgres:${DB_PORT}/${AUTH_DB}
+      - DB_USER=${DB_USERNAME}
+      - DB_PASS=${DB_PASSWORD}
+      - MY_SECRET_KEY=${MY_SECRET_KEY}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - LOGSTASH_HOST=logstash
+      - LOGSTASH_PORT=5000
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - JAVA_OPTS=-Xms128m -Xmx256m
+    depends_on:
+      insurance-postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+      logstash:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+    networks:
+      - insurance-net
+
+
+  user-service:
+    build: ./userService/userService
+    container_name: user-service
+    ports:
+      - "8082:8082"
+    env_file:
+      - .env
+    environment:
+      - DB_URL=jdbc:postgresql://insurance-postgres:${DB_PORT}/${USER_DB}
+      - DB_USER=${DB_USERNAME}
+      - DB_PASS=${DB_PASSWORD}
+      - MY_SECRET_KEY=${MY_SECRET_KEY}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - SPRING_PROFILES_ACTIVE=dev
+      - LOGSTASH_HOST=logstash
+      - LOGSTASH_PORT=5000
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - JAVA_OPTS=-Xms128m -Xmx256m
+
+    depends_on:
+      insurance-postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+      logstash:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+    networks:
+      - insurance-net
+
+
+  customer-service:
+    build: ./customerService/customerService
+    container_name: customer-service
+    ports:
+      - "8084:8084"
+    env_file:
+      - .env
+    environment:
+      - DB_URL=jdbc:postgresql://insurance-postgres:${DB_PORT}/${CUSTOMER_DB}
+      - DB_USER=${DB_USERNAME}
+      - DB_PASS=${DB_PASSWORD}
+      - REDIS_HOST=redis-ms
+      - REDIS_PORT=6379
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - SPRING_PROFILES_ACTIVE=dev
+      - LOGSTASH_HOST=logstash
+      - LOGSTASH_PORT=5000
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - JAVA_OPTS=-Xms128m -Xmx256m
+    depends_on:
+      insurance-postgres:
+        condition: service_healthy
+      redis-ms:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+      logstash:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+    networks:
+      - insurance-net
+
+
+  health-service:
+    build: ./healthService/healthService
+    container_name: health-service
+    ports:
+      - "8087:8087"
+    env_file:
+      - .env
+    environment:
+      - DB_URL=jdbc:postgresql://insurance-postgres:${DB_PORT}/${HEALTH_DB}
+      - DB_USER=${DB_USERNAME}
+      - DB_PASS=${DB_PASSWORD}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - SPRING_PROFILES_ACTIVE=dev
+      - LOGSTASH_HOST=logstash
+      - LOGSTASH_PORT=5000
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - JAVA_OPTS=-Xms128m -Xmx256m
+    depends_on:
+      insurance-postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+      logstash:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+    networks:
+      - insurance-net
+
+
+  home-service:
+    build: ./homeService/homeService
+    container_name: home-service
+    ports:
+      - "8085:8085"
+    env_file:
+      - .env
+    environment:
+      - DB_URL=jdbc:postgresql://insurance-postgres:${DB_PORT}/${HOME_DB}
+      - DB_USER=${DB_USERNAME}
+      - DB_PASS=${DB_PASSWORD}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - SPRING_PROFILES_ACTIVE=dev
+      - LOGSTASH_HOST=logstash
+      - LOGSTASH_PORT=5000
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - JAVA_OPTS=-Xms128m -Xmx256m
+    depends_on:
+      insurance-postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+      logstash:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+    networks:
+      - insurance-net
+
+
+  traffic-service:
+    build: ./trafficService/trafficService
+    container_name: traffic-service
+    ports:
+      - "8089:8089"
+    env_file:
+      - .env
+    environment:
+      - DB_URL=jdbc:postgresql://insurance-postgres:${DB_PORT}/${TRAFFIC_DB}
+      - DB_USER=${DB_USERNAME}
+      - DB_PASS=${DB_PASSWORD}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - SPRING_PROFILES_ACTIVE=dev
+      - LOGSTASH_HOST=logstash
+      - LOGSTASH_PORT=5000
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - JAVA_OPTS=-Xms128m -Xmx256m
+    depends_on:
+      insurance-postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+      logstash:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+    networks:
+      - insurance-net
+
+
+  kasko-service:
+    build: ./kaskoService/kaskoService
+    container_name: kasko-service
+    ports:
+      - "8090:8090"
+    env_file:
+      - .env
+    environment:
+      - DB_URL=jdbc:postgresql://insurance-postgres:${DB_PORT}/${KASKO_DB}
+      - DB_USER=${DB_USERNAME}
+      - DB_PASS=${DB_PASSWORD}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - SPRING_PROFILES_ACTIVE=dev
+      - LOGSTASH_HOST=logstash
+      - LOGSTASH_PORT=5000
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - JAVA_OPTS=-Xms128m -Xmx256m
+    depends_on:
+      insurance-postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+      logstash:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+    networks:
+      - insurance-net
+
+
+  vehicle-service:
+    build: ./vehicleService/vehicleService
+    container_name: vehicle-service
+    ports:
+      - "8088:8088"
+    env_file:
+      - .env
+    environment:
+      - DB_URL=jdbc:postgresql://insurance-postgres:${DB_PORT}/${VEHICLE_DB}
+      - DB_USER=${DB_USERNAME}
+      - DB_PASS=${DB_PASSWORD}
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - SPRING_PROFILES_ACTIVE=dev
+      - REDIS_HOST=redis-ms
+      - REDIS_PORT=6379
+      - LOGSTASH_HOST=logstash
+      - LOGSTASH_PORT=5000
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - JAVA_OPTS=-Xms128m -Xmx256m
+    depends_on:
+      insurance-postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      redis-ms:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+      logstash:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+    networks:
+      - insurance-net
+
+
+  policy-service:
+    build: ./policyService/policyService
+    container_name: policy-service
+    ports:
+      - "8086:8086"
+    env_file:
+      - .env
+    environment:
+      - DB_URL=jdbc:postgresql://insurance-postgres:${DB_PORT}/${POLICY_DB}
+      - DB_USER=${DB_USERNAME}
+      - DB_PASS=${DB_PASSWORD}
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=dev
+      - LOGSTASH_HOST=logstash
+      - LOGSTASH_PORT=5000
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - JAVA_OPTS=-Xms128m -Xmx256m
+    depends_on:
+      insurance-postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+      config-server:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+    networks:
+      - insurance-net
+
+
+  payment-service:
+    build: ./paymentService/paymentService
+    container_name: payment-service
+    ports:
+      - "8091:8091"
+    env_file:
+      - .env
+    environment:
+      - DB_URL=jdbc:postgresql://insurance-postgres:${DB_PORT}/${PAYMENT_DB}
+      - DB_USER=${DB_USERNAME}
+      - DB_PASS=${DB_PASSWORD}
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
+      - SPRING_PROFILES_ACTIVE=dev
+      - LOGSTASH_HOST=logstash
+      - LOGSTASH_PORT=5000
+      - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
+      - JAVA_OPTS=-Xms128m -Xmx256m
+    depends_on:
+      insurance-postgres:
+        condition: service_healthy
+      kafka:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+      zipkin:
+        condition: service_started
+      config-server:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 350M
+    networks:
+      - insurance-net
+
+
 networks:
   insurance-net:
     driver: bridge
-
 
 volumes:
   postgres_data:
