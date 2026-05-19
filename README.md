@@ -473,13 +473,13 @@ Bu problemi çözmek amacıyla sistemde minimal seviyede public authentication e
 
 İlk kullanıcı oluşturma akışı:
 
-```text
-Client
-   ↓
-auth-service
-   ↓
-AuthUser Create
-```
+      ```text
+      Client
+         ↓
+      auth-service
+         ↓
+      AuthUser Create
+      ```
 Bu işlem sonrasında kullanıcı login olarak JWT token elde eder ve artık korumalı user-service endpointlerine erişebilir.
 
 Business Kullanıcı Oluşturma Akışı
@@ -487,18 +487,18 @@ Business Kullanıcı Oluşturma Akışı
 Gerçek kullanıcı yönetimi ise user-service üzerinden gerçekleştirilir.
 
 Bu süreçte:
-```
-Client
-↓
-UserRequest
-↓
-user-service
-↓
-Feign Client
-↓
-auth-service
-↓
-AuthUser Create
+    ```
+    Client
+        ↓
+    UserRequest
+        ↓
+    user-service
+        ↓
+    Feign Client
+        ↓
+    auth-service
+        ↓
+    AuthUser Create
 ```
 akışı çalışır.
 
