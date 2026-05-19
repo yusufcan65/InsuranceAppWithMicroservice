@@ -439,7 +439,7 @@ CREATE DATABASE vehicle_db;
 ```bash
 docker compose up --build -d config-server
 docker compose up --build -d eureka-server
-docker compose up --build
+docker compose up --build -d
 ```
 
 ---
