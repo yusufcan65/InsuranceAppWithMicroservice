@@ -488,17 +488,30 @@ Gerçek kullanıcı yönetimi ise user-service üzerinden gerçekleştirilir.
 
 Bu süreçte:
 
-Client
-   ↓
-UserRequest
-   ↓
-user-service
-   ↓
-Feign Client
-   ↓
-auth-service
-   ↓
-AuthUser Create
+   ```bash
+
+    Client
+
+        ↓
+
+    UserRequest
+
+        ↓
+
+    user-service
+
+        ↓
+
+    Feign Client
+
+        ↓
+
+    auth-service
+
+        ↓
+
+    AuthUser Create
+```
 
 akışı çalışır.
 
