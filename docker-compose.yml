@@ -225,8 +225,8 @@ services:
       - DB_PASS=${DB_PASSWORD}
       - MY_SECRET_KEY=${MY_SECRET_KEY}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - LOGSTASH_HOST=logstash
       - LOGSTASH_PORT=5000
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
