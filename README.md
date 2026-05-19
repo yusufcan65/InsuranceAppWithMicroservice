@@ -115,7 +115,7 @@ olmuştur.
 
 # ☁️ Infrastructure Mimarisi
 
-                                      ```text
+```text
                                       ┌──────────────────────────────────────────────────────────────────────────────┐
                                       │                             INFRASTRUCTURE                                   │
                                       │                                                                              │
@@ -135,7 +135,7 @@ olmuştur.
                                       │  └────────────┘   └────────────┘                                             │
                                       │                                                                              │
                                       └──────────────────────────────────────────────────────────────────────────────┘
-                                      ```
+```
 
 ---
 
@@ -473,13 +473,13 @@ Bu problemi çözmek amacıyla sistemde minimal seviyede public authentication e
 
 İlk kullanıcı oluşturma akışı:
 
-      ```bash
+```bash
       Client
          ↓
       auth-service
          ↓
       AuthUser Create
-      ```
+```
 Bu işlem sonrasında kullanıcı login olarak JWT token elde eder ve artık korumalı user-service endpointlerine erişebilir.
 
 Business Kullanıcı Oluşturma Akışı
@@ -490,26 +490,16 @@ Bu süreçte:
 
    ```bash
 
-    Client
-
+     Client
         ↓
-
     UserRequest
-
         ↓
-
     user-service
-
         ↓
-
     Feign Client
-
         ↓
-
     auth-service
-
         ↓
-
     AuthUser Create
 ```
 
