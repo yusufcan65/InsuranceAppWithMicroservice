@@ -473,7 +473,7 @@ Bu problemi çözmek amacıyla sistemde minimal seviyede public authentication e
 
 İlk kullanıcı oluşturma akışı:
 
-      ```text
+      ```bash
       Client
          ↓
       auth-service
@@ -488,7 +488,7 @@ Gerçek kullanıcı yönetimi ise user-service üzerinden gerçekleştirilir.
 
 Bu süreçte:
 
-    ```
+    ```bash
     Client
         ↓
     UserRequest
