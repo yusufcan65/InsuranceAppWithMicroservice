@@ -94,7 +94,9 @@ services:
     ports:
       - "8083:8083"
     environment:
-      - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - SPRING_CONFIG_IMPORT=optional:configserver:http://config-server:8888
+      - CONFIG_SERVER_URL=http://config-server:8888
+      - SPRING_PROFILES_ACTIVE=prod
       - MY_SECRET_KEY=${MY_SECRET_KEY}
     depends_on:
       config-server:
@@ -223,8 +225,8 @@ services:
       - DB_PASS=${DB_PASSWORD}
       - MY_SECRET_KEY=${MY_SECRET_KEY}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - SPRING_PROFILES_ACTIVE=dev
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
+      - SPRING_PROFILES_ACTIVE=prod
       - LOGSTASH_HOST=logstash
       - LOGSTASH_PORT=5000
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
@@ -260,7 +262,7 @@ services:
       - MY_SECRET_KEY=${MY_SECRET_KEY}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - LOGSTASH_HOST=logstash
       - LOGSTASH_PORT=5000
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
@@ -298,7 +300,7 @@ services:
       - REDIS_PORT=6379
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - LOGSTASH_HOST=logstash
       - LOGSTASH_PORT=5000
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
@@ -335,7 +337,7 @@ services:
       - DB_PASS=${DB_PASSWORD}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - LOGSTASH_HOST=logstash
       - LOGSTASH_PORT=5000
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
@@ -370,7 +372,7 @@ services:
       - DB_PASS=${DB_PASSWORD}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - LOGSTASH_HOST=logstash
       - LOGSTASH_PORT=5000
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
@@ -405,7 +407,7 @@ services:
       - DB_PASS=${DB_PASSWORD}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - LOGSTASH_HOST=logstash
       - LOGSTASH_PORT=5000
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
@@ -440,7 +442,7 @@ services:
       - DB_PASS=${DB_PASSWORD}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - LOGSTASH_HOST=logstash
       - LOGSTASH_PORT=5000
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
@@ -475,7 +477,7 @@ services:
       - DB_PASS=${DB_PASSWORD}
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - REDIS_HOST=redis-ms
       - REDIS_PORT=6379
       - LOGSTASH_HOST=logstash
@@ -515,7 +517,7 @@ services:
       - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - LOGSTASH_HOST=logstash
       - LOGSTASH_PORT=5000
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
@@ -553,7 +555,7 @@ services:
       - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
       - SPRING_CONFIG_IMPORT=configserver:http://config-server:8888
       - EUREKA_CLIENT_SERVICE_URL_DEFAULTZONE=http://eureka-server:8761/eureka/
-      - SPRING_PROFILES_ACTIVE=dev
+      - SPRING_PROFILES_ACTIVE=prod
       - LOGSTASH_HOST=logstash
       - LOGSTASH_PORT=5000
       - MANAGEMENT_ZIPKIN_TRACING_ENDPOINT=http://zipkin:9411/api/v2/spans
