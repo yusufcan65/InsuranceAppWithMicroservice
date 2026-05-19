@@ -32,7 +32,7 @@ This project is a microservices architecture built for the insurance sector. Use
 
 ## Architecture / Mimari
 
-                                                                              ```
+                                                         ```
                                                                                                       ┌─────────────────┐
                                                                                                       │  Config Server  │  :8888
                                                                                                       └────────┬────────┘
@@ -65,7 +65,7 @@ This project is a microservices architecture built for the insurance sector. Use
                                                                                   │ Kasko Service  │
                                                                                   │    :8090       │
                                                                                   └────────────────┘
-                                                                              ```
+                                                          ```
 
 ### Infrastructure / Altyapı
                                                                               
