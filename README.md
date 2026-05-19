@@ -573,7 +573,7 @@ DELETE /api/v1/policies/{id}
 ## Payment Service
 
 ```http
-GET    /api/v1/payment
+GET    /api/v1/payments
 ```
 ---
 
