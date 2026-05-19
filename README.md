@@ -70,7 +70,7 @@ olmuştur.
 
 # 🏗️ Mikroservis Mimarisi
 
-                            ```text
+```text
                                                                   ┌────────────────────┐
                                                                   │   Config Server    │
                                                                   │       :8888        │
@@ -109,7 +109,7 @@ olmuştur.
                                                                   │   Kasko Service    │
                                                                   │       :8090        │
                                                                   └────────────────────┘
-                            ```
+```
 
 ---
 
