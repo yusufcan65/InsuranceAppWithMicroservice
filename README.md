@@ -499,7 +499,7 @@ Bu süreçte:
     auth-service
         ↓
     AuthUser Create
-```
+    ```
 akışı çalışır.
 
 Bu yapı sayesinde:
@@ -508,14 +508,14 @@ Authentication ve business domainleri ayrıştırılmıştır
 Security yapısı merkezi hale getirilmiştir
 Mikroservis sorumlulukları net şekilde ayrılmıştır
 Feign Client ile servisler arası kontrollü iletişim sağlanmıştır
-# 📘 Swagger Endpointleri
 
+# 📘 Swagger Endpointleri
 
 Tüm swagger endpointleri API Gateway üzerinden erişilebilir durumdadır.
 
 ## Swagger UI
 
-```text
+```
 http://localhost:8083/swagger-ui.html
 ```
 
