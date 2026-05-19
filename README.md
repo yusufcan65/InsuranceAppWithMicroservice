@@ -487,6 +487,7 @@ Business Kullanıcı Oluşturma Akışı
 Gerçek kullanıcı yönetimi ise user-service üzerinden gerçekleştirilir.
 
 Bu süreçte:
+
     ```
     Client
         ↓
