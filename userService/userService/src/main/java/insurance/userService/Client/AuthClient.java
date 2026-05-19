@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface AuthClient {
 
     Logger logger = LoggerFactory.getLogger(AuthClient.class);
-    @PostMapping("/v1/auth/internal/create")
+    @PostMapping("/api/v1/auth/internal/authUser")
     @Retry(name = "authRetry")
     @CircuitBreaker(name = "authServiceCB", fallbackMethod = "authFallBack")
     RestResponse<UserAuthResponse> createAuthUser(@RequestBody CreateAuthUserRequest request);
