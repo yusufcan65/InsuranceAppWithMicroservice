@@ -62,9 +62,9 @@ public class PolicyServiceImpl implements PolicyService {
         return toResponse(toSave);
     }
     @Override
-    public PolicyResponse updatePolicy(UpdatePolicyRequest updateRequest){
+    public PolicyResponse updatePolicy(UUID id, UpdatePolicyRequest updateRequest){
 
-        Policy policy = getById(updateRequest.policyId());
+        Policy policy = getById(id);
 
         if("P".equals(policy.getStatus())){
             throw new PolicyAlreadyActiveException("You can't update an active policy");

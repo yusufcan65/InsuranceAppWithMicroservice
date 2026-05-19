@@ -19,7 +19,7 @@ public interface PolicyClient {
 
     Logger logger = LoggerFactory.getLogger(PolicyClient.class);
 
-    @PostMapping("/v1/policy/internal/feign/create")
+    @PostMapping("/api/v1/policies/internal/create")
     @Retry(name = "policyRetry")
     @CircuitBreaker(name = "policyServiceCB", fallbackMethod = "policyFallBack")
     RestResponse<PolicyResponse> createPolicy(@RequestBody CreateTrafficPolicyRequest request);

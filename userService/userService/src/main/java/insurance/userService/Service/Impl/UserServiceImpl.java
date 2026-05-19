@@ -1,11 +1,8 @@
 package insurance.userService.Service.Impl;
 
 import insurance.userService.Client.AuthClient;
+import insurance.userService.Dto.*;
 import insurance.userService.Dto.Auth.CreateAuthUserRequest;
-import insurance.userService.Dto.UserAuthResponse;
-import insurance.userService.Dto.UserFeignResponse;
-import insurance.userService.Dto.UserRequest;
-import insurance.userService.Dto.UserResponse;
 import insurance.userService.Entity.Users;
 import insurance.userService.Exception.UserNotFoundException;
 import insurance.userService.Repository.UserRepository;
@@ -45,6 +42,20 @@ public class UserServiceImpl implements UserService {
 
 
         return toResponse(toSave);
+    }
+
+    @Override
+    public UserResponse updateUser(UUID id,UpdateUserRequest request){
+        Users user = getUserById(id);
+
+        user.setName(request.name());
+        user.setSurname(request.surname());
+        user.setPhone(request.phone());
+        user.setEmail(request.email());
+
+        Users toUpdate = userRepository.save(user);
+
+        return toResponse(toUpdate);
     }
 
     @Override

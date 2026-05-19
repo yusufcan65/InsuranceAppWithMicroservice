@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/v1/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
 
     private final AuthService authService;
@@ -25,15 +25,10 @@ public class AuthController {
         AuthResponse authResponse = authService.login(loginRequest);
         return new ResponseEntity<>(RestResponse.of(authResponse), HttpStatus.OK);
     }
-    @GetMapping()
-    public ResponseEntity<RestResponse<List<AuthUserInformationResponse>>> getAll(){
-        List<AuthUserInformationResponse> authUserInformationResponses = authService.getAuthUsers();
-        return new ResponseEntity<>(RestResponse.of(authUserInformationResponses),HttpStatus.OK);
-    }
 
-    @PostMapping("/internal/create")
+    @PostMapping("/internal/authUser")
     public ResponseEntity<RestResponse<UserAuthResponse>> createUserAuth(@RequestBody CreateAuthUserRequest request){
         UserAuthResponse userAuthResponse = authService.createAuthUser(request);
-        return new ResponseEntity<>(RestResponse.of(userAuthResponse),HttpStatus.OK);
+        return new ResponseEntity<>(RestResponse.of(userAuthResponse),HttpStatus.CREATED);
     }
 }

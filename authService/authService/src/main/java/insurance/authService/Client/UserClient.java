@@ -17,7 +17,7 @@ public interface UserClient {
 
     Logger logger = LoggerFactory.getLogger(UserClient.class);
 
-    @GetMapping("/v1/user/internal/auth/{username}")
+    @GetMapping("/api/v1/users/internal/auth/{username}")
     @Retry(name = "userRetry")
     @CircuitBreaker(name = "userServiceCB", fallbackMethod = "userFallBack")
     RestResponse<UserAuthResponse> getUserForAuth(@PathVariable String username);

@@ -13,7 +13,7 @@ import insurance.trafficService.Dto.TrafficRequest;
 import insurance.trafficService.Service.TrafficService;
 
 @RestController
-@RequestMapping("/v1/traffic")
+@RequestMapping("/api/v1/traffic-policies")
 public class TrafficController {
 
     private final TrafficService trafficService;
@@ -22,9 +22,9 @@ public class TrafficController {
         this.trafficService = trafficService;
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<RestResponse<TrafficPolicyDetailResponse>> createTrafficPolicy(@RequestBody TrafficRequest trafficRequest){
         TrafficPolicyDetailResponse trafficPolicyDetailResponse = trafficService.createTrafficPolicyCreate(trafficRequest);
-        return new ResponseEntity<>(RestResponse.of(trafficPolicyDetailResponse),HttpStatus.OK);
+        return new ResponseEntity<>(RestResponse.of(trafficPolicyDetailResponse),HttpStatus.CREATED);
     }
 }

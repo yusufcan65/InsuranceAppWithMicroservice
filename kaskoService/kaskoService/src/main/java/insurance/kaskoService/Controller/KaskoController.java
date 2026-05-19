@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
-@RequestMapping("/v1/kasko")
+@RequestMapping("/api/v1/kasko-policies")
 public class KaskoController {
 
     private final KaskoService kaskoService;
@@ -22,9 +22,9 @@ public class KaskoController {
         this.kaskoService = kaskoService;
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<RestResponse<KaskoPolicyDetailResponse>> createKaskoPolicy(@RequestBody KaskoRequest kaskoRequest){
         KaskoPolicyDetailResponse kaskoPolicyDetailResponse = kaskoService.createKaskoPolicyCreate(kaskoRequest);
-        return new ResponseEntity<>(RestResponse.of(kaskoPolicyDetailResponse), HttpStatus.OK);
+        return new ResponseEntity<>(RestResponse.of(kaskoPolicyDetailResponse), HttpStatus.CREATED);
     }
 }

@@ -34,12 +34,12 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/v1/auth/**",
+                        .requestMatchers("/api/v1/auth/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**"
                                 ).permitAll()
-                        .requestMatchers("/v1/auth/internal/**").permitAll()
+                        .requestMatchers("/api/v1/auth/internal/**").permitAll()
                         .anyRequest().authenticated()
                 );
 

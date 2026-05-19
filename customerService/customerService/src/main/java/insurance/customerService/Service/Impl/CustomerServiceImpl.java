@@ -3,6 +3,7 @@ package insurance.customerService.Service.Impl;
 import insurance.customerService.Client.UserClient;
 import insurance.customerService.Dto.CustomerRequest;
 import insurance.customerService.Dto.CustomerResponse;
+import insurance.customerService.Dto.UpdateCustomerRequest;
 import insurance.customerService.Dto.UserResponse;
 import insurance.customerService.Entity.Customer;
 import insurance.customerService.Exception.CustomerAlreadyExistsException;
@@ -10,7 +11,9 @@ import insurance.customerService.Exception.CustomerNotFoundException;
 import insurance.customerService.Repository.CustomerRepository;
 import insurance.customerService.Service.CustomerService;
 import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -56,6 +59,45 @@ public class CustomerServiceImpl implements CustomerService {
         return toResponse(toSave);
 
     }
+
+
+    @Override
+    @Caching(
+            put = {
+                    @CachePut(value = "customers", key = "#id")
+            },
+            evict = {
+                    @CacheEvict(value = "customers", key = "'allCustomers'")
+            }
+    )
+    public CustomerResponse updateCustomer(UUID id, UpdateCustomerRequest request){
+
+        Customer customer = getById(id);
+
+        customer.setName(request.name());
+        customer.setSurname(request.surname());
+        customer.setPhoneNumber(request.phoneNumber());
+        customer.setEmail(request.email());
+
+        Customer toUpdate = customerRepository.save(customer);
+
+        return toResponse(toUpdate);
+    }
+
+    @Caching(
+            evict = {
+                    @CacheEvict(value = "customers", key = "#id"),
+                    @CacheEvict(value = "customers", key = "'allCustomers'")
+            }
+    )
+    public CustomerResponse deleteCustomer(UUID id){
+        Customer customer = getById(id);
+
+        customerRepository.delete(customer);
+
+        return toResponse(customer);
+    }
+
 
     @Cacheable(value = "customers", key = "'allCustomers'")
     @Override

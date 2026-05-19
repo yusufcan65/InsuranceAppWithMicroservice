@@ -11,7 +11,7 @@ public interface PolicyService {
 
     PolicyResponse CreatePolicy(PolicyRequest request);
 
-    PolicyResponse updatePolicy(UpdatePolicyRequest updateRequest);
+    PolicyResponse updatePolicy(UUID id, UpdatePolicyRequest updateRequest);
 
     PolicyResponse deletePolicy(UUID policyId);
 

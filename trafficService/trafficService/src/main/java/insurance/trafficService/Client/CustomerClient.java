@@ -19,7 +19,7 @@ public interface CustomerClient {
 
     Logger logger = LoggerFactory.getLogger(CustomerClient.class);
 
-    @GetMapping("/v1/customer/internal/feign/{id}")
+    @GetMapping("/api/v1/customers/internal/{id}")
     @Retry(name = "customerRetry")
     @CircuitBreaker( name = "customerServiceCB" ,fallbackMethod = "customerFallBack")
     RestResponse<CustomerResponse> getCustomerForFeign(@PathVariable UUID id);

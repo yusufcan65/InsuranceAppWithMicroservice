@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/v1/home")
+@RequestMapping("/api/v1/home-policies")
 public class HomeController {
 
     private final HomeService homeService;
@@ -21,9 +21,9 @@ public class HomeController {
         this.homeService = homeService;
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<RestResponse<DaskResponse>> createDaskPolicy(@RequestBody DaskRequest request){
         DaskResponse daskResponse = homeService.createDaskPolicy(request);
-        return new ResponseEntity<>(RestResponse.of(daskResponse), HttpStatus.OK);
+        return new ResponseEntity<>(RestResponse.of(daskResponse), HttpStatus.CREATED);
     }
 }

@@ -19,7 +19,7 @@ public interface VehicleClient {
 
     Logger log = LoggerFactory.getLogger(VehicleClient.class);
 
-    @GetMapping("/v1/vehicle/internal/feign/{id}")
+    @GetMapping("/api/v1/vehicles/internal/{id}")
     @Retry(name = "vehicleRetry")
     @CircuitBreaker(name = "vehicleServiceCB", fallbackMethod = "vehicleFallBack")
     RestResponse<CarResponse> getCarById(@PathVariable UUID id);

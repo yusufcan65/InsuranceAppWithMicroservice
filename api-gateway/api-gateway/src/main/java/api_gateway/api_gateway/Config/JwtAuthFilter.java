@@ -57,6 +57,6 @@ public class JwtAuthFilter implements GlobalFilter, Ordered {
 
     @Override
     public int getOrder() {
-        return -1; // negatif = en önce çalışır
+        return -1;
     }
 }

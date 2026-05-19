@@ -15,11 +15,11 @@ import java.util.UUID;
 @FeignClient(name = "policyService")
 public interface PolicyClient {
 
-    @GetMapping("/v1/policy/internal/feign/payment/{id}")
+    @GetMapping("/v1/policy/internal/payment/{id}")
     RestResponse<PolicyResponse> getPolicyForPayment(@PathVariable UUID id);
 
     // kafka eklendiği için feign client ile atılan post ve put istekleri devre dışı bırakıldı
-    @PutMapping("/v1/policy/internal/active/feign/{policyId}/{paymentId}")
+    @PutMapping("/api/v1/policies/internal/active/policy/{policyId}/{paymentId}")
     PolicyResponse activePolicy(@PathVariable UUID policyId, @PathVariable UUID paymentId);
 
 
