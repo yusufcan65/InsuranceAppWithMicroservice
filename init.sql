@@ -1,0 +1,10 @@
+CREATE DATABASE auth_db;
+CREATE DATABASE user_db;
+CREATE DATABASE customer_db;
+CREATE DATABASE health_db;
+CREATE DATABASE home_db;
+CREATE DATABASE kasko_db;
+CREATE DATABASE traffic_db;
+CREATE DATABASE policy_db;
+CREATE DATABASE payment_db;
+CREATE DATABASE vehicle_db;
